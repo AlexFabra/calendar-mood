@@ -1,1 +1,13 @@
 
+ion-alert.select-alert {
+    --background: black!important;
+
+    button {
+        color: white !important;
+        font-size: 20px !important;
+    }
+
+    .sc-ion-alert-md {
+        color: white;
+    }
+}

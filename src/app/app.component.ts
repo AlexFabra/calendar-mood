@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import {SqlConnectorService} from './services/sql-connector.service';
+import {HttpClientModule} from '@angular/common/http';
+import {SQLitePorter} from '@awesome-cordova-plugins/sqlite-porter/ngx';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,6 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() {}
+  constructor(sqlServ: SqlConnectorService, httpClient: HttpClientModule, sqLitePorter: SQLitePorter) {
+  }
 }

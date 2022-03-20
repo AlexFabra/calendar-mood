@@ -8,14 +8,23 @@ import { ExploreContainerComponentModule } from '../explore-container/explore-co
 
 import { Tab2PageRoutingModule } from './tab2-routing.module';
 
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   imports: [
     IonicModule,
     CommonModule,
     FormsModule,
     ExploreContainerComponentModule,
-    Tab2PageRoutingModule
+    Tab2PageRoutingModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
-  declarations: [Tab2Page]
+  declarations: [Tab2Page],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'cat-ES' }]
 })
-export class Tab2PageModule {}
+export class Tab2PageModule { }

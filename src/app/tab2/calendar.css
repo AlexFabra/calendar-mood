@@ -1,0 +1,13 @@
+::ng-deep.dissabte {
+    background:#ababab;
+    border-radius: 0%;
+}
+::ng-deep.diumenge {
+    background: grey;
+    border-radius: 0%;
+    font-weight:600;
+}
+
+.mat-calendar-body-cell-container{
+    border-radius:0px;
+}

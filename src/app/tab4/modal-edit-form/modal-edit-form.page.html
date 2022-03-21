@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar preguntes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)=dismissModal()>Tancar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- si utilitzem ng for amb ngModel, cada vegada que editem un text es re-renderitza la llista i s'ens desselecciona el text que estem editant
+  per aixó no l'utilitzem -->
+  <ion-list>
+    <ion-item>
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      <ion-textarea [(ngModel)]="questions[0]"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      <ion-textarea [(ngModel)]="questions[1]"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      <ion-textarea [(ngModel)]="questions[2]"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      <ion-textarea [(ngModel)]="questions[3]"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-icon slot="start" name="arrow-forward"></ion-icon>
+      <ion-textarea [(ngModel)]="questions[4]"></ion-textarea>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)=guardar()>Guardar</ion-button>
+
+</ion-content>

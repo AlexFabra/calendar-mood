@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Configuració
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-header collapse="condense">
+
+    <ion-toolbar>
+      <ion-title size="large">Configuració</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid style="text-align:center">
+    <ion-row>
+      <ng-container>
+        Pots afegir o treure preguntes per personalitzar el teu questionari:
+      </ng-container>
+    </ion-row>
+    <ion-button expand="block" (click)=modificarPreguntes()>Modificar preguntes</ion-button>
+    <ion-row>
+      <ng-container>
+        Pots afegir o treure etiquetes de emocions per obtenir la selecció de les més familiars:
+      </ng-container>
+    </ion-row>
+    <ion-button expand="block" (click)=modificarEtiquetes()>Modificar etiquetes</ion-button>
+  </ion-grid>
+
+</ion-content>

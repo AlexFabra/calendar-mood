@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar etiquetes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)=dismissModal()>Tancar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row class="ion-align-items-center">
+      <ion-col size="12" class="ion-text-center">
+        <ion-chip>
+          <ion-icon name="arrow-forward"></ion-icon>
+          <ion-textarea [(ngModel)]="newLabel"></ion-textarea>
+        </ion-chip>
+      </ion-col>
+    </ion-row>
+
+    <ion-button expand="block" (click)=addLabel()>Afegir etiqueta</ion-button>
+    <ion-list style="text-align:center">
+      <ion-chip *ngFor="let tag of tags">
+        <ion-label >{{tag}}
+          <ion-icon name="close" (click)="deleteLabel(tag)"></ion-icon>
+        </ion-label>
+      </ion-chip>
+    </ion-list>
+
+  </ion-grid>
+
+</ion-content>

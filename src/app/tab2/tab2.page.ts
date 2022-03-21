@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import './tab2.page.css';
 
-import { DateAdapter } from '@angular/material/core';
+import { DateAdapter } from "@angular/material/core";
 
 @Component({
   selector: 'app-tab2',
@@ -11,7 +11,7 @@ import { DateAdapter } from '@angular/material/core';
 })
 export class Tab2Page {
 
-  selectedDate: string;
+  selectedDate: String;
   selected: Date = new Date();
 
   constructor(date: DateAdapter<Date>) {
@@ -20,14 +20,13 @@ export class Tab2Page {
   }
 
   /** Assignar classes segons el dia.
-   *
    * @param cellDate element el valor del qual és la data.
    * @param view 'month' || 'year'
    * @returns nom de la classe que se li aplicarà al dia seleccionat.
    */
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
 
-    let style: string = '';
+    var style: String = '';
     // Només és si la vista del mes:
     if (view === 'month') {
       //nombre del dia del mes:
@@ -45,6 +44,6 @@ export class Tab2Page {
 
 
     return style;
-  };
+  }
 
 }

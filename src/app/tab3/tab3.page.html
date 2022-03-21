@@ -1,17 +1,20 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 3
+      Estadístiques mensuals
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ng-container>
+    <ion-list style="text-align:center">
+      <ion-label>{{selectedMonth}}, {{selectedYear}}</ion-label>
+    </ion-list>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  </ng-container>
+  <div echarts [options]="option" [extentions]="echartsExtentions"></div>
+
+  <ion-button expand="block" (click)="showPicker()">Selecciona mes/any a mostrar</ion-button>
+
 </ion-content>

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, LOCALE_ID } from '@angular/core';
+import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
 import { form_answers } from '../interfaces/form_answers.interface';
 import {SqlConnectorService} from "../services/sql-connector.service";
 
@@ -15,9 +15,20 @@ interface Tag {
   styleUrls: []
 })
 
-export class Tab1Page {
+export class Tab1Page implements OnInit{
+  questions = ["","","","",""];
+  answers = ["","","","",""];
+  constructor(@Inject(LOCALE_ID) public locale: string, private sql:SqlConnectorService) { }
 
-  constructor(@Inject(LOCALE_ID) public locale: string, sql:SqlConnectorService) { }
+  ngOnInit() {
+      this.sql.getLastQuestions().then((res) => {
+      let resJson = res[0]
+      this.questions = Object.keys(resJson).map((key) => {return resJson[key]; })
+      this.questions.splice(0,1)
+
+      return res;
+    });
+  }
 
   currentDate: Date = new Date();
 
@@ -37,12 +48,6 @@ export class Tab1Page {
   ]
 
   public selectedTags: String[] = [];
-
-  pregunta1: String = "";
-  pregunta2: String = "";
-  pregunta3: String = "";
-  pregunta4: String = "";
-  pregunta5: String = "";
 
   /** Quan es fa submit del formulari s'executa aquesta funció
    *  envia al backend les dades
@@ -68,11 +73,11 @@ export class Tab1Page {
       date: formatDate(this.currentDate, 'dd/MM/yyyy', this.locale),
       percentage: this.rangeValue,
       tags: JSONselectedTags,
-      a1: this.pregunta1,
-      a2: this.pregunta2,
-      a3: this.pregunta3,
-      a4: this.pregunta4,
-      a5: this.pregunta5
+      a1: this.answers[0],
+      a2: this.answers[1],
+      a3: this.answers[2],
+      a4: this.answers[3],
+      a5: this.answers[4]
     }
 
 

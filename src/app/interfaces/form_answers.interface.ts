@@ -1,10 +1,12 @@
 export interface form_answers {
-    date: String,
+    date: string,
     percentage:number,
     tags:{},
-    a1: String,
-    a2: String,
-    a3: String,
-    a4: String,
-    a5: String
+    a1: string,
+    a2: string,
+    a3: string,
+    a4: string,
+    a5: string,
+    formId?: number,
+    userTagId?: number
 }

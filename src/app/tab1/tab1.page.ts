@@ -1,6 +1,6 @@
-import { formatDate } from '@angular/common';
+import {formatDate} from '@angular/common';
 import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
-import { form_answers } from '../interfaces/form_answers.interface';
+import {form_answers} from '../interfaces/form_answers.interface';
 import {SqlConnectorService} from "../services/sql-connector.service";
 
 
@@ -15,22 +15,39 @@ interface Tag {
   styleUrls: []
 })
 
-export class Tab1Page implements OnInit{
-  questions = ["","","","",""];
-  answers = ["","","","",""];
-  constructor(@Inject(LOCALE_ID) public locale: string, private sql:SqlConnectorService) { }
+export class Tab1Page implements OnInit {
+  questions = ["", "", "", "", ""];
+  answers = ["", "", "", "", ""];
+  currentDate: Date = new Date();
+  formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
+
+  constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService) {
+  }
 
   ngOnInit() {
-      this.sql.getLastQuestions().then((res) => {
+    this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
-      this.questions = Object.keys(resJson).map((key) => {return resJson[key]; })
-      this.questions.splice(0,1)
+      this.questions = Object.keys(resJson).map((key) => {
+        return resJson[key];
+      })
+      this.questions.splice(0, 1)
 
       return res;
     });
+
+    //esborrem de l'array els llocs que estàn buits ( si n'hi ha):
+    this.questions=this.questions.filter(question => question != "")
+    //definim la longitud de les respostes segons la longitud de les preguntes:
+    this.answers.length=this.questions.length;
+
+    //todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
+
+    if(this.sql.getAnswersFromDate(this.formattedCurrentDate)){
+      console.log("HOLA PAPI")
+    }
   }
 
-  currentDate: Date = new Date();
+
 
   //color per defecte del component ion-range:
   public color: string = "tertiary";
@@ -38,13 +55,13 @@ export class Tab1Page implements OnInit{
   rangeValue: number = 5;
 
   public tags: Tag[] = [
-    { name: "alegria", color: "primary" },
-    { name: "tristessa", color: "tertiary" },
-    { name: "pau", color: "light" },
-    { name: "serenitat", color: "dark" },
-    { name: "ira", color: "blue" },
-    { name: "ràbia", color: "red" },
-    { name: "inquietud", color: "blue" }
+    {name: "alegria", color: "primary"},
+    {name: "tristessa", color: "tertiary"},
+    {name: "pau", color: "light"},
+    {name: "serenitat", color: "dark"},
+    {name: "ira", color: "blue"},
+    {name: "ràbia", color: "red"},
+    {name: "inquietud", color: "blue"}
   ]
 
   public selectedTags: String[] = [];
@@ -52,7 +69,7 @@ export class Tab1Page implements OnInit{
   /** Quan es fa submit del formulari s'executa aquesta funció
    *  envia al backend les dades
    */
-  public saveClick() {
+  public async saveClick() {
     //TODO: Enviar les dades a backend
     // console.log(this.pregunta1);
     // console.log(this.pregunta2);
@@ -60,7 +77,10 @@ export class Tab1Page implements OnInit{
     // console.log(this.selectedTags)
 
     //obtenim els tags i els passem a un JSON:
-    const JSONselectedTags = { t1: this.selectedTags[0], t2: this.selectedTags[1], t3: this.selectedTags[2], t4: this.selectedTags[3], t5: this.selectedTags[4] };
+    const JSONselectedTags = {
+      t1: this.selectedTags[0], t2: this.selectedTags[1],
+      t3: this.selectedTags[2], t4: this.selectedTags[3], t5: this.selectedTags[4],
+    };
 
     for (var clave in JSONselectedTags) {
       if (JSONselectedTags[clave] === undefined) {
@@ -69,22 +89,43 @@ export class Tab1Page implements OnInit{
     }
 
     const form: form_answers =
-    {
-      date: formatDate(this.currentDate, 'dd/MM/yyyy', this.locale),
-      percentage: this.rangeValue,
-      tags: JSONselectedTags,
-      a1: this.answers[0],
-      a2: this.answers[1],
-      a3: this.answers[2],
-      a4: this.answers[3],
-      a5: this.answers[4]
+      {
+        date: this.formattedCurrentDate,
+        percentage: this.rangeValue,
+        tags: JSONselectedTags,
+        a1: this.answers[0],
+        a2: this.answers[1],
+        a3: this.answers[2],
+        a4: this.answers[3],
+        a5: this.answers[4]
+      }
+
+    const questionsJson = {
+      q1: this.questions[0],
+      q2: this.questions[1],
+      q3: this.questions[2],
+      q4: this.questions[3],
+      q5: this.questions[4]
     }
 
 
-
     console.log(JSON.stringify(Object.assign({}, this.selectedTags)))
-    console.log(JSONselectedTags)
-    console.log(form)
+    console.log(JSONselectedTags, "JSONselectedTags")
+
+    await this.sql.insertUserTags(JSONselectedTags)
+    await this.sql.insertQuestions(questionsJson)
+
+    const lastQuestion = await this.sql.getLastQuestions()
+    const questionId = lastQuestion[0].id
+    const lastUserTags = await this.sql.getLastUserTags()
+    const userTagsId = lastUserTags[0].id
+
+    form["formId"] = questionId
+    form["userTagId"] = userTagsId
+    console.log(form, "ANSWERS")
+    await this.sql.insertAnswer(form)
+
+    console.log(await this.sql.getAllRows(), "ALL ROWS")
 
   }
 
@@ -94,27 +135,38 @@ export class Tab1Page implements OnInit{
   public rangeChange(value: any) {
     this.rangeValue = value.detail.value
     switch (value.detail.value) {
-      case 0: this.color = "dark"
+      case 0:
+        this.color = "dark"
         break;
-      case 1: this.color = "dark"
+      case 1:
+        this.color = "dark"
         break;
-      case 2: this.color = "dark"
+      case 2:
+        this.color = "dark"
         break;
-      case 3: this.color = "danger"
+      case 3:
+        this.color = "danger"
         break;
-      case 4: this.color = "warning"
+      case 4:
+        this.color = "warning"
         break;
-      case 5: this.color = "tertiary"
+      case 5:
+        this.color = "tertiary"
         break;
-      case 6: this.color = "secondary"
+      case 6:
+        this.color = "secondary"
         break;
-      case 7: this.color = "primary"
+      case 7:
+        this.color = "primary"
         break;
-      case 8: this.color = "success"
+      case 8:
+        this.color = "success"
         break;
-      case 9: this.color = "medium"
+      case 9:
+        this.color = "medium"
         break;
-      case 10: this.color = "light"
+      case 10:
+        this.color = "light"
         break;
       default:
         this.color = "dark"

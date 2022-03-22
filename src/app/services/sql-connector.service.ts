@@ -50,6 +50,7 @@ export class SqlConnectorService {
           console.log("tables created")
         }).catch((e) => {
           console.log("ERROR CREATING TABLE: " + table)
+          console.log(e)
         });
     }
 
@@ -78,7 +79,7 @@ export class SqlConnectorService {
   }
 
   async getAllRows() {
-    return this.databaseObj.executeSql('SELECT * FROM form;', [])
+    return this.databaseObj.executeSql('SELECT * FROM form_answers;', [])
       .then((data) => {
 
         let jsonResult = [] //Creació array on aniran tots els resultats amb JSON
@@ -264,9 +265,15 @@ export class SqlConnectorService {
       ;
     `, [date])
       .then(async (data) => {
+        console.log(data.row.length, "DATA ROW")
+        console.log(this.isEmpty(data.row))
         const answers = [];
-        for (let i = 0; i < data.row.length; i++) {
-          answers.push(data.rows.item(i));
+
+        if(this.isEmpty(data)){
+          console.log("he entrao")
+          for (let i = 0; i < data.row.length; i++) {
+            answers.push(data.rows.item(i));
+          }
         }
 
         return answers;
@@ -322,7 +329,7 @@ export class SqlConnectorService {
       `
         INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4, answer5)
         values (?, ?, ?, ?, ?, ?, ?, ?, ?);
-      `, [formId, userTagId, answers.date, answers.mood, answers.a1, answers.a2, answers.a3, answers.a4,
+      `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
                 answers.a5]);
   }
 
@@ -330,8 +337,10 @@ export class SqlConnectorService {
     this.databaseObj.executeSql(
       `
         INSERT INTO 'user_tags'(tag1, tag2, tag3, tag4, tag5)
-        values (?, ?, ?, ?, ?, ?);
-      `, [tags.t1, tags.t2, tags.t3, tags.t4, tags.t5]);
+        values (?, ?, ?, ?, ?);
+      `, [tags.t1, tags.t2, tags.t3, tags.t4, tags.t5]).catch((e)=> {
+      console.log("ERROR:", e)
+    });
   }
 
   async insertQuestions(questions) {

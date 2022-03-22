@@ -46,19 +46,9 @@
     </ion-chip>
   </ion-item>
 
-  <ion-item>
-    <ion-label position="stacked">Que t'ha fet sentir així?</ion-label>
-    <ion-textarea placeholder="la teva resposta" [(ngModel)]=""></ion-textarea>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="stacked">Que sents que has fet bé?</ion-label>
-    <ion-textarea placeholder="la teva resposta" [(ngModel)]="pregunta2"></ion-textarea>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="stacked">Que creus que pots millorar?</ion-label>
-    <ion-textarea placeholder="la teva resposta" [(ngModel)]="pregunta3"></ion-textarea>
+  <ion-item *ngFor="let question of questions; let i=index">
+    <ion-label position="stacked">{{question}}</ion-label>
+    <ion-textarea placeholder="la teva resposta" [(ngModel)]="answers[i]"></ion-textarea>
   </ion-item>
 
   <ion-button expand="block" (click)=saveClick()>Guardar</ion-button>

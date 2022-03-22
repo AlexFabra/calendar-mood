@@ -387,6 +387,27 @@ export class SqlConnectorService {
     }
   }
 
+  async insertTag(tag: String) {
+    this.databaseObj.executeSql(
+      `
+        INSERT INTO 'tags'(name)
+        values (?);`
+      , [tag]
+    );
+  }
+
+  async deleteTag(tag: String) {
+    this.databaseObj.executeSql(
+      `
+        DELETE
+        FROM 'tags'
+        WHERE name = (?);
+      `,
+      [tag]
+    )
+    ;
+  }
+
   isEmpty(x) {
     if (x == undefined) {
       return true;

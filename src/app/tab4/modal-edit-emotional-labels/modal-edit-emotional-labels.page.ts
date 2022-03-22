@@ -12,7 +12,8 @@ export class ModalEditEmotionalLabelsPage implements OnInit {
 
   tags: String[] = ["mayestático", "esperpéntico", "plusquamperfecto"]
 
-  constructor(private modalController: ModalController) { }
+  constructor(private modalController: ModalController) {
+  }
 
   ngOnInit() {
   }

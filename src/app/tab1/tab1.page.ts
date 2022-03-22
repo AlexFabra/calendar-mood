@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID } from '@angular/core';
 import { form_answers } from '../interfaces/form_answers.interface';
+import {SqlConnectorService} from "../services/sql-connector.service";
 
 
 interface Tag {
@@ -16,7 +17,7 @@ interface Tag {
 
 export class Tab1Page {
 
-  constructor(@Inject(LOCALE_ID) public locale: string) { }
+  constructor(@Inject(LOCALE_ID) public locale: string, sql:SqlConnectorService) { }
 
   currentDate: Date = new Date();
 

@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tab4Page } from './tab4.page';
 import { Tab1PageRoutingModule } from './tab4-routing.module';
-import { BrowserModule } from '@angular/platform-browser';
+import {ModalEditFormPageModule} from "./modal-edit-form/modal-edit-form.module";
+import {ModalEditEmotionalLabelsPageModule} from "./modal-edit-emotional-labels/modal-edit-emotional-labels.module";
 
 
 @NgModule({
@@ -13,9 +14,11 @@ import { BrowserModule } from '@angular/platform-browser';
     IonicModule,
     CommonModule,
     FormsModule,
-    Tab1PageRoutingModule
+    Tab1PageRoutingModule,
+    ModalEditFormPageModule,
+    ModalEditEmotionalLabelsPageModule
   ],
   providers: []
-  
+
 })
 export class Tab4PageModule {}

@@ -2,7 +2,6 @@ export const createTags = `
 CREATE TABLE IF NOT EXISTS "tags" (
 "id"INTEGER,
 "name"TEXT,
-"color"TEXT,
 PRIMARY KEY("id" AUTOINCREMENT)
 );
 `;

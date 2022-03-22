@@ -11,6 +11,7 @@ import {
   createUserTags
 } from '../../assets/createTableVariables';
 import {addWarning} from "@angular-devkit/build-angular/src/utils/webpack-diagnostics";
+import {isEmpty} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -42,32 +43,15 @@ export class SqlConnectorService {
   }
 
   async createTable() {
-    await this.databaseObj.executeSql(createForm, [])
-      .then(async () => {
-        console.log("tables created")
-        // await this.insertRow();
-
-      }).catch((e) => {
-        console.log("ERROR CREATING TABLES")
-      });
-
-    await this.databaseObj.executeSql(createFormAnswers, [])
-      .catch((e) =>{
-        console.log("ERROR CREATING FORM_ANSWERS TABLE")
-        console.log(e)
-      })
-
-    await this.databaseObj.executeSql(createTags, [])
-      .catch((e) =>{
-        console.log("ERROR CREATING TAGS TABLE")
-        console.log(e)
-      })
-
-    await this.databaseObj.executeSql(createUserTags, [])
-      .catch((e) =>{
-        console.log("ERROR CREATING USER_TAG TABLE")
-        console.log(e)
-    })
+    let tablesVariables = [createForm, createFormAnswers, createTags, createUserTags]
+    for (const table of tablesVariables) {
+      await this.databaseObj.executeSql(table, [])
+        .then(async () => {
+          console.log("tables created")
+        }).catch((e) => {
+          console.log("ERROR CREATING TABLE: " + table)
+        });
+    }
 
     console.log("TABLES CREATED")
 
@@ -79,7 +63,14 @@ export class SqlConnectorService {
       t5: "tranquilo"
     }
 
-    await this.insertUserTags(tags)
+    if(this.isEmpty(await this.getLastQuestions())){
+      this.insertBasicForm()
+    }
+    if(this.isEmpty(await this.getLastTag())){ //todo: comprovar si es isEmpty o lenght == 0
+      this.insertBasicTag()
+    }
+
+    // await this.insertUserTags(tags)
 
     console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
     console.log(await this.getLastQuestions(), "LAST QUESTIONS")
@@ -104,8 +95,8 @@ export class SqlConnectorService {
 
   async insertRow() {
     this.databaseObj.executeSql(
-      'INSERT INTO \'form\'(question1, question2, question3, question4, question5) values(\'a\',\'b\',\'c\',\'d\',\'e\') '
-      , [])
+      'INSERT INTO \'form\'(question1, question2, question3, question4, question5) values(?,?,?,?,?) '
+      , ['a','b','c','d','e'])
       .then(async () => {
         console.log("data inserted");
 
@@ -172,6 +163,30 @@ export class SqlConnectorService {
       console.log("ERROR GETTING LAST TAG")
       console.log(e)
     });
+  }
+
+  async getLastTag(){
+    return this.databaseObj.executeSql(`
+      SELECT *
+      FROM tags
+      WHERE id =
+            (
+              SELECT MAX(id)
+              FROM tags
+            )
+      ;
+    `, [])
+      .then((data) => {
+        const tags = [];
+        if (data.rows.length > 0) {
+          tags.push(data.rows.item(0));
+        }
+        return tags;
+
+      }).catch((e) => {
+        console.log("ERROR GETTING LAST TAG")
+        console.log(e)
+      });
   }
 
   async getQuestionsFromId(id) {
@@ -291,6 +306,8 @@ export class SqlConnectorService {
     //todo: recibir mood a partir de fechas (mes?, hace for con dias?)
   }
 
+
+
   async insertAnswer(answers) {
     const lastForm = await this.getLastQuestions();
     const formId = lastForm[0].id;
@@ -332,5 +349,42 @@ export class SqlConnectorService {
     `;
 
     return this.databaseObj.executeSql(statement);
+  }
+
+  fistInserts(){
+    this.insertBasicForm()
+    this.insertBasicTag()
+  }
+
+  async insertBasicForm(){
+    this.databaseObj.executeSql(
+      `
+        INSERT INTO 'form'(question1, question2, question3, question4, question5)
+        values (?, ?, ?, ?, ?);
+      `, ["Què has fet avui?","Què t'ha fet sentir així?", "Què sents que has fet bé?", "Què creus que pots millorar?",
+         "Canviaries alguna cosa?"]
+    );
+  }
+
+  async insertBasicTag(){
+    let tagNames = ["tristesa", "alegria", "serenitat", "calidesa", "distanciament", "orgull", "amor", "fúria",
+      "remordiment", "por", "confiança", "fàsic"]
+
+    for (const name of tagNames) {
+      this.databaseObj.executeSql(
+        `
+        INSERT INTO 'tags'(name)
+        values (?);
+      `, [name]
+      );
+    }
+  }
+
+  isEmpty(x){
+    if(x == undefined) {return true;}
+    if(x == null) {return true;}
+    if(x == '') {return true;}
+
+    return false;
   }
 }

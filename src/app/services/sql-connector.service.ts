@@ -64,10 +64,10 @@ export class SqlConnectorService {
       t5: "tranquilo"
     }
 
-    if(this.isEmpty(await this.getLastQuestions())){
+    if (this.isEmpty(await this.getLastQuestions())) {
       this.insertBasicForm()
     }
-    if(this.isEmpty(await this.getLastTag())){ //todo: comprovar si es isEmpty o lenght == 0
+    if (this.isEmpty(await this.getLastTag())) { //todo: comprovar si es isEmpty o lenght == 0
       this.insertBasicTag()
     }
 
@@ -97,7 +97,7 @@ export class SqlConnectorService {
   async insertRow() {
     this.databaseObj.executeSql(
       'INSERT INTO \'form\'(question1, question2, question3, question4, question5) values(?,?,?,?,?) '
-      , ['a','b','c','d','e'])
+      , ['a', 'b', 'c', 'd', 'e'])
       .then(async () => {
         console.log("data inserted");
 
@@ -161,12 +161,12 @@ export class SqlConnectorService {
         return tags;
 
       }).catch((e) => {
-      console.log("ERROR GETTING LAST TAG")
-      console.log(e)
-    });
+        console.log("ERROR GETTING LAST TAG")
+        console.log(e)
+      });
   }
 
-  async getLastTag(){
+  async getLastTag() {
     return this.databaseObj.executeSql(`
       SELECT *
       FROM tags
@@ -230,7 +230,7 @@ export class SqlConnectorService {
       });
   }
 
-  async getFormAnswerFromDate(date){
+  async getFormAnswerFromDate(date) {
     //todo: PASAR DATE CON EL REGEX HECHO
     return this.databaseObj.executeSql(`
       SELECT *
@@ -257,7 +257,7 @@ export class SqlConnectorService {
       });
   }
 
-  async getAnswersFromDate(date){ //PASAR DATE CON REGEX HECHO
+  async getAnswersFromDate(date) { //PASAR DATE CON REGEX HECHO
     return this.databaseObj.executeSql(`
       SELECT *
       FROM form_answers
@@ -267,7 +267,7 @@ export class SqlConnectorService {
       .then(async (data) => {
         const answers = [];
 
-        if(!this.isEmpty(data.row)){
+        if (!this.isEmpty(data.row)) {
           console.log("he entrao")
           for (let i = 0; i < data.row.length; i++) {
             answers.push(data.rows.item(i));
@@ -282,7 +282,7 @@ export class SqlConnectorService {
       });
   }
 
-  async getTagQuantFromDate(date, tag){
+  async getTagQuantFromDate(date, tag) {
     //todo: recibir cantidad de veces que se repite un tag a partir de una fecha
     let answersFromDate: any;
     answersFromDate = await this.getAnswersFromDate(date);
@@ -290,27 +290,27 @@ export class SqlConnectorService {
     let count = 0
 
     for (const answer of answersFromDate) {
-     await this.databaseObj.executeSql(`
-      SELECT id
-      FROM user_tags
-      WHERE id = ? AND (tag1 = ? OR tag2 = ? OR tag3 = ? OR tag4 = ? OR tag5 = ?)
-      ;
-    `, [answer.id, tag, tag, tag ,tag ,tag])
-        .then(async (data) => {
-        if (data.rows.length>0) count++;
+      await this.databaseObj.executeSql(`
+        SELECT id
+        FROM user_tags
+        WHERE id = ?
+          AND (tag1 = ? OR tag2 = ? OR tag3 = ? OR tag4 = ? OR tag5 = ?)
+        ;
+      `, [answer.id, tag, tag, tag, tag, tag])
+        .then((data) => {
+          if (data.rows.length > 0) count++;
 
         }).catch((e) => {
-        console.log("ERROR GETTING TAG QUANTITY")
-        console.log(e)
-      });
+          console.log("ERROR GETTING TAG QUANTITY")
+          console.log(e)
+        });
     }
     return count
   }
 
-  getMoodFromDate(date){
+  getMoodFromDate(date) {
     //todo: recibir mood a partir de fechas (mes?, hace for con dias?)
   }
-
 
 
   async insertAnswer(answers) {
@@ -328,7 +328,7 @@ export class SqlConnectorService {
         INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4, answer5)
         values (?, ?, ?, ?, ?, ?, ?, ?, ?);
       `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
-                answers.a5]);
+        answers.a5]);
   }
 
   async insertUserTags(tags) {
@@ -336,7 +336,7 @@ export class SqlConnectorService {
       `
         INSERT INTO 'user_tags'(tag1, tag2, tag3, tag4, tag5)
         values (?, ?, ?, ?, ?);
-      `, [tags.t1, tags.t2, tags.t3, tags.t4, tags.t5]).catch((e)=> {
+      `, [tags.t1, tags.t2, tags.t3, tags.t4, tags.t5]).catch((e) => {
       console.log("ERROR:", e)
     });
   }
@@ -358,39 +358,45 @@ export class SqlConnectorService {
     return this.databaseObj.executeSql(statement);
   }
 
-  fistInserts(){
+  fistInserts() {
     this.insertBasicForm()
     this.insertBasicTag()
   }
 
-  async insertBasicForm(){
+  async insertBasicForm() {
     this.databaseObj.executeSql(
       `
         INSERT INTO 'form'(question1, question2, question3, question4, question5)
         values (?, ?, ?, ?, ?);
-      `, ["Què has fet avui?","Què t'ha fet sentir així?", "Què sents que has fet bé?", "Què creus que pots millorar?",
-         "Canviaries alguna cosa?"]
+      `, ["Què has fet avui?", "Què t'ha fet sentir així?", "Què sents que has fet bé?", "Què creus que pots millorar?",
+        "Canviaries alguna cosa?"]
     );
   }
 
-  async insertBasicTag(){
+  async insertBasicTag() {
     let tagNames = ["tristesa", "alegria", "serenitat", "calidesa", "distanciament", "orgull", "amor", "fúria",
       "remordiment", "por", "confiança", "fàsic"]
 
     for (const name of tagNames) {
       this.databaseObj.executeSql(
         `
-        INSERT INTO 'tags'(name)
-        values (?);
-      `, [name]
+          INSERT INTO 'tags'(name)
+          values (?);
+        `, [name]
       );
     }
   }
 
-  isEmpty(x){
-    if(x == undefined) {return true;}
-    if(x == null) {return true;}
-    if(x == '') {return true;}
+  isEmpty(x) {
+    if (x == undefined) {
+      return true;
+    }
+    if (x == null) {
+      return true;
+    }
+    if (x == '') {
+      return true;
+    }
 
     return false;
   }

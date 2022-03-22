@@ -24,7 +24,7 @@ export class Tab1Page implements OnInit {
   constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService) {
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
       this.questions = Object.keys(resJson).map((key) => {
@@ -39,11 +39,16 @@ export class Tab1Page implements OnInit {
     this.questions=this.questions.filter(question => question != "")
     //definim la longitud de les respostes segons la longitud de les preguntes:
     this.answers.length=this.questions.length;
+//todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
 
-    //todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
+    const lastAnswer = await this.sql.getAnswersFromDate(this.formattedCurrentDate)
 
-    if(this.sql.getAnswersFromDate(this.formattedCurrentDate)){
-      console.log("HOLA PAPI")
+    if(!this.sql.isEmpty(lastAnswer)){
+      console.log(lastAnswer[0])
+      const tags = await this.sql.getUserTagFromId(lastAnswer[0].user_tags_id)
+
+      //para coger el resultado de tags utilizar tags[0] ACUERDATE PAPI
+
     }
   }
 

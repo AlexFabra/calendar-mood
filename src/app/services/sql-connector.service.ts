@@ -265,11 +265,9 @@ export class SqlConnectorService {
       ;
     `, [date])
       .then(async (data) => {
-        console.log(data.row.length, "DATA ROW")
-        console.log(this.isEmpty(data.row))
         const answers = [];
 
-        if(this.isEmpty(data)){
+        if(!this.isEmpty(data.row)){
           console.log("he entrao")
           for (let i = 0; i < data.row.length; i++) {
             answers.push(data.rows.item(i));

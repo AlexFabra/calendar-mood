@@ -1,7 +1,7 @@
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Tab3Page } from './tab3.page';
 
@@ -21,6 +21,7 @@ import { EchartsxModule } from 'echarts-for-angular';
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')})
   ],
-  declarations: [Tab3Page]
+  declarations: [Tab3Page],
+  providers: [DatePipe]
 })
 export class Tab3PageModule {}

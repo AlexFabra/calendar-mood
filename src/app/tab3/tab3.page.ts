@@ -4,6 +4,8 @@ import { EChartsOption } from 'echarts';
 import { TooltipComponent, GridComponent, LegendComponent } from "echarts/components";
 import { PickerController } from "@ionic/angular";
 import { PickerOptions } from "@ionic/core";
+import { SqlConnectorService } from '../services/sql-connector.service';
+import { DatePipe } from '@angular/common';
 
 
 @Component({
@@ -32,7 +34,7 @@ export class Tab3Page implements OnInit {
   numColumns: number = 2; // number of columns to display on picker over lay
   numOptions: number = 5  // number of items (or rows) to display on
 
-  constructor(private pickerCtrl: PickerController) {
+  constructor(private pickerCtrl: PickerController,private sql: SqlConnectorService, private datePipe: DatePipe) {
     this.echartsExtentions = [
       BarChart,
       LineChart,
@@ -44,6 +46,12 @@ export class Tab3Page implements OnInit {
   }
 
   ngOnInit() {
+    
+    console.log(this.datePipe.transform(this.currentDate,'dd/MM/yyyy'))
+    const formattedDate = this.datePipe.transform(this.currentDate,'dd/MM/yyyy');
+    var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
+    console.log(fdModified)
+
     var data = [
       {
         name: 'Apatia',

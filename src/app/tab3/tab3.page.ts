@@ -47,11 +47,9 @@ export class Tab3Page implements OnInit {
 
   async ngOnInit() {
 
-    console.log(this.datePipe.transform(this.currentDate,'dd/MM/yyyy'))
-    const formattedDate = this.datePipe.transform(this.currentDate,'dd/MM/yyyy');
-    var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
-    console.log(fdModified)
-    console.log(await this.sql.getTagQuantFromDate(fdModified,"tristesa"), "UWU")
+    const formattedDate = this.obtainFormattedDate(this.currentDate)
+    
+    await this.sql.getTagQuantFromDate(formattedDate,"tristesa")
 
     var data = [
       {
@@ -179,5 +177,14 @@ export class Tab3Page implements OnInit {
     this.selectedYear = year;
     this.unselected=true;
   }
+
+    /** donada una Date, retorna un string que representa una data en format '__/01/2021'
+   * @returns string
+   */
+     public obtainFormattedDate(date:Date): string{
+      const formattedDate = this.datePipe.transform(date,'dd/MM/yyyy');
+      var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
+      return fdModified;
+    }
 
 }

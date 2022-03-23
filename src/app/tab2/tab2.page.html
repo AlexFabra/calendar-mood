@@ -14,7 +14,7 @@
       <ion-col lg-6 md-8>
         <div>
           <ion-card style="background-color: white;">
-            <mat-calendar #monthCalendar [(selected)]="selected" [dateClass]="dateClass"></mat-calendar>
+            <mat-calendar #monthCalendar [(selected)]="selected" [dateClass]="dateClass" (selectedChange)="getChangedValue($event)"></mat-calendar>
           </ion-card>
         </div>
       </ion-col>

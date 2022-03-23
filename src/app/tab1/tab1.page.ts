@@ -71,8 +71,6 @@ export class Tab1Page {
   //variable que guarda l'estat d'ànim general diari de l'usuari:
   rangeValue: number = 5;
 
-
-
   public selectedTags: String[] = [];
 
   /** Quan es fa submit del formulari s'executa aquesta funció

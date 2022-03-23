@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { BarChart, LineChart, PieChart, PieSeriesOption } from "echarts/charts";
-import { EChartsOption } from 'echarts';
-import { TooltipComponent, GridComponent, LegendComponent } from "echarts/components";
-import { PickerController } from "@ionic/angular";
-import { PickerOptions } from "@ionic/core";
-import { SqlConnectorService } from '../services/sql-connector.service';
-import { DatePipe } from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {BarChart, LineChart, PieChart, PieSeriesOption} from "echarts/charts";
+import {EChartsOption} from 'echarts';
+import {TooltipComponent, GridComponent, LegendComponent} from "echarts/components";
+import {PickerController} from "@ionic/angular";
+import {PickerOptions} from "@ionic/core";
+import {SqlConnectorService} from '../services/sql-connector.service';
+import {DatePipe} from '@angular/common';
 
 
 @Component({
@@ -45,42 +45,21 @@ export class Tab3Page implements OnInit {
     ];
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+  }
 
+  async ionViewWillEnter() {
     const formattedDate = this.obtainFormattedDate(this.currentDate)
 
-    await this.sql.getTagQuantFromDate(formattedDate, "tristesa")
+    const tags = await this.sql.getAllTags();
 
-    var data = [
-      {
-        name: 'Apatia',
-        value: 10
-      },
-      {
-        name: 'Solitud',
-        value: 10
-      },
-      {
-        name: 'Alegria',
-        value: 20
-      },
-      {
-        name: 'Calidessa',
-        value: 30
-      },
-      {
-        name: 'Serendipia',
-        value: 20
-      },
-      {
-        name: 'Tristessa',
-        value: 10
-      },
-      {
-        name: 'Inquietud',
-        value: 18
-      }
-    ];
+    let data = []
+
+    //Agafem tots els tags i comprovem la quantitat d'aquests per mes i els afegim a l'array de Json 'data'
+    for (const tag of tags) {
+      const tagQuant = await this.sql.getTagQuantFromDate(formattedDate, tag.name)
+      data.push({name: tag.name, value: tagQuant})
+    }
 
     this.option = {
       series: [
@@ -115,6 +94,7 @@ export class Tab3Page implements OnInit {
         }
       ],
     };
+
   }
 
   async showPicker() {
@@ -159,7 +139,7 @@ export class Tab3Page implements OnInit {
   getMonthOptions() {
     let options = [];
     this.monthOptions.forEach(x => {
-      options.push({ text: x, value: x });
+      options.push({text: x, value: x});
     });
     return options;
   }
@@ -167,7 +147,7 @@ export class Tab3Page implements OnInit {
   getYearOptions() {
     let options = [];
     this.yearOptions.forEach(x => {
-      options.push({ text: x, value: x });
+      options.push({text: x, value: x});
     });
     return options;
   }

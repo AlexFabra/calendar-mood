@@ -26,15 +26,15 @@ export class Tab3Page implements OnInit {
   currentYear: number = this.currentDate.getFullYear();
   currentMonth: number = this.currentDate.getMonth() + 1;
 
-  selectedMonth: String=this.monthOptions[this.currentMonth];
+  selectedMonth: String = this.monthOptions[this.currentMonth];
   selectedYear: String = this.currentYear.toString();
 
-  unselected:boolean=true;
+  unselected: boolean = true;
 
   numColumns: number = 2; // number of columns to display on picker over lay
   numOptions: number = 5  // number of items (or rows) to display on
 
-  constructor(private pickerCtrl: PickerController,private sql: SqlConnectorService, private datePipe: DatePipe) {
+  constructor(private pickerCtrl: PickerController, private sql: SqlConnectorService, private datePipe: DatePipe) {
     this.echartsExtentions = [
       BarChart,
       LineChart,
@@ -48,8 +48,8 @@ export class Tab3Page implements OnInit {
   async ngOnInit() {
 
     const formattedDate = this.obtainFormattedDate(this.currentDate)
-    
-    await this.sql.getTagQuantFromDate(formattedDate,"tristesa")
+
+    await this.sql.getTagQuantFromDate(formattedDate, "tristesa")
 
     var data = [
       {
@@ -153,7 +153,7 @@ export class Tab3Page implements OnInit {
 
     let picker = await this.pickerCtrl.create(opts);
     picker.present();
-    this.unselected=false;
+    this.unselected = false;
   }
 
   getMonthOptions() {
@@ -175,16 +175,16 @@ export class Tab3Page implements OnInit {
   changeDate(month, year) {
     this.selectedMonth = month;
     this.selectedYear = year;
-    this.unselected=true;
+    this.unselected = true;
   }
 
-    /** donada una Date, retorna un string que representa una data en format '__/01/2021'
-   * @returns string
-   */
-     public obtainFormattedDate(date:Date): string{
-      const formattedDate = this.datePipe.transform(date,'dd/MM/yyyy');
-      var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
-      return fdModified;
-    }
+  /** donada una Date, retorna un string que representa una data en format '__/01/2021'
+ * @returns string
+ */
+  public obtainFormattedDate(date: Date): string {
+    const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+    var fdModified = '__' + formattedDate.substring(2, formattedDate.length);
+    return fdModified;
+  }
 
 }

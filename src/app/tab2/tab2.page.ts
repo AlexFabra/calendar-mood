@@ -3,6 +3,8 @@ import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import './tab2.page.css';
 
 import { DateAdapter } from "@angular/material/core";
+import { DatePipe } from '@angular/common';
+import { SqlConnectorService } from '../services/sql-connector.service';
 
 @Component({
   selector: 'app-tab2',
@@ -11,12 +13,17 @@ import { DateAdapter } from "@angular/material/core";
 })
 export class Tab2Page {
 
+  monthView: Date = new Date();
   selectedDate: String;
   selected: Date = new Date();
+  moods:[]=[];
 
-  constructor(date: DateAdapter<Date>) {
+  constructor(date: DateAdapter<Date>, datePipe: DatePipe, private sql: SqlConnectorService) {
     //canvia el dia d'inici de la setmana a dilluns:
     date.getFirstDayOfWeek = () => 1;
+
+    let formattedDate = this.obtainFormattedDate(this.monthView)
+    this.sql.getMoodFromDate(formattedDate).then((res)=>{this.moods=res})
   }
 
   /** Assignar classes segons el dia.
@@ -26,7 +33,7 @@ export class Tab2Page {
    */
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
 
-    var style: String = '';
+    let style: String = '';
     // Només és si la vista del mes:
     if (view === 'month') {
       //nombre del dia del mes:
@@ -39,11 +46,17 @@ export class Tab2Page {
       } else if (dayOfWeek === 6) {
         style = 'dissabte';
       }
-
     }
-
-
     return style;
   }
+
+    /** donada una Date, retorna un string que representa una data en format '__/01/2021'
+ * @returns string
+ */
+     public obtainFormattedDate(date: Date): string {
+      const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+      var fdModified = '__' + formattedDate.substring(2, formattedDate.length);
+      return fdModified;
+    }
 
 }

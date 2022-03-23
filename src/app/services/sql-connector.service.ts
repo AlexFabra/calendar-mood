@@ -282,15 +282,13 @@ export class SqlConnectorService {
     return this.databaseObj.executeSql(`
       SELECT *
       FROM form_answers
-      WHERE date = ?
+      WHERE date LIKE ?
       ;
     `, [date])
       .then(async (data) => {
         const answers = [];
-
-        if (!this.isEmpty(data.row)) {
-          console.log("he entrao")
-          for (let i = 0; i < data.row.length; i++) {
+        if (!this.isEmpty(data.rows)) {
+          for (let i = 0; i < data.rows.length; i++) {
             answers.push(data.rows.item(i));
           }
         }
@@ -315,9 +313,9 @@ export class SqlConnectorService {
         SELECT id
         FROM user_tags
         WHERE id = ?
-          AND (tag1 = ? OR tag2 = ? OR tag3 = ? OR tag4 = ? OR tag5 = ?)
+          AND (tag1 LIKE ? OR tag2 = ? OR tag3 = ? OR tag4 = ? OR tag5 = ?)
         ;
-      `, [answer.id, tag, tag, tag, tag, tag])
+      `, [answer.user_tags_id, tag, tag, tag, tag, tag])
         .then((data) => {
           if (data.rows.length > 0) count++;
 

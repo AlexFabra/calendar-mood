@@ -23,7 +23,6 @@ export class Tab3Page implements OnInit {
   yearOptions: String[] = ['2022', '2023'];
 
   currentDate: Date = new Date();
-  currentFormatDate: string = '';
   currentYear: number = this.currentDate.getFullYear();
   currentMonth: number = this.currentDate.getMonth() + 1;
 
@@ -46,10 +45,13 @@ export class Tab3Page implements OnInit {
     ];
   }
 
-  ngOnInit() {
-    
-    this.currentFormatDate=this.obtainFormattedDate(this.currentDate);
-    
+  async ngOnInit() {
+
+    console.log(this.datePipe.transform(this.currentDate,'dd/MM/yyyy'))
+    const formattedDate = this.datePipe.transform(this.currentDate,'dd/MM/yyyy');
+    var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
+    console.log(fdModified)
+    console.log(await this.sql.getTagQuantFromDate(fdModified,"tristesa"), "UWU")
 
     var data = [
       {
@@ -178,12 +180,4 @@ export class Tab3Page implements OnInit {
     this.unselected=true;
   }
 
-  /** donada una Date, retorna un string que representa una data en format '__/01/2021'
-   * @returns string
-   */
-  public obtainFormattedDate(date:Date): string{
-    const formattedDate = this.datePipe.transform(date,'dd/MM/yyyy');
-    var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
-    return fdModified;
-  }
 }

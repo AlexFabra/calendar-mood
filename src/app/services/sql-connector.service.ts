@@ -64,11 +64,12 @@ export class SqlConnectorService {
       t5: "tranquilo"
     }
 
-    if (this.isEmpty(await this.getLastQuestions())) {
+    if (this.isEmpty(await this.getLastQuestions()[0])) {
       this.insertBasicForm()
     }
-    if (this.isEmpty(await this.getLastTag())) { //todo: comprovar si es isEmpty o lenght == 0
+    if (this.isEmpty(await this.getLastTag()[0])) { //todo: comprovar si es isEmpty o lenght == 0
       this.insertBasicTag()
+      console.log("BASIC TAG INSERTED")
     }
 
     // await this.insertUserTags(tags)
@@ -187,6 +188,25 @@ export class SqlConnectorService {
       }).catch((e) => {
         console.log("ERROR GETTING LAST TAG")
         console.log(e)
+      });
+  }
+
+  async getAllTags() {
+    return this.databaseObj.executeSql(`
+        SELECT *
+        FROM tags;`
+      , [])
+      .then((data) => {
+        let jsonResult = [] //Creació array on aniran tots els resultats amb JSON
+        for (let i = 0; i < data.rows.length; i++) { //Agafem tots els resultats
+          jsonResult.push(data.rows.item(i))
+        }
+        console.log(jsonResult, "JSONRESULT")
+        return jsonResult;
+      }).catch((e) => {
+        console.log("ERROR GETTING ALL ROWS")
+        console.log(e)
+        return JSON.stringify(e);
       });
   }
 
@@ -375,7 +395,7 @@ export class SqlConnectorService {
 
   async insertBasicTag() {
     let tagNames = ["tristesa", "alegria", "serenitat", "calidesa", "distanciament", "orgull", "amor", "fúria",
-      "remordiment", "por", "confiança", "fàsic"]
+      "remordiment", "por", "confiança", "fàstic"]
 
     for (const name of tagNames) {
       this.databaseObj.executeSql(
@@ -393,7 +413,12 @@ export class SqlConnectorService {
         INSERT INTO 'tags'(name)
         values (?);`
       , [tag]
-    );
+    ).then(() =>{
+      console.log("INSTERT TAG WORKING")
+    }).catch((e) =>{
+      console.log("ERROR INSTERTING TAG")
+      console.log(e)
+    });
   }
 
   async deleteTag(tag: String) {
@@ -404,8 +429,12 @@ export class SqlConnectorService {
         WHERE name = (?);
       `,
       [tag]
-    )
-    ;
+    ).then(() =>{
+      console.log("DELETE TAG WORKING")
+    }).catch((e) =>{
+      console.log("ERROR DELETING TAG")
+      console.log(e)
+    });
   }
 
   isEmpty(x) {

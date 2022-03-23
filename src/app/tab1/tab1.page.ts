@@ -47,6 +47,7 @@ export class Tab1Page implements OnInit {
       console.log(lastAnswer[0])
       const tags = await this.sql.getUserTagFromId(lastAnswer[0].user_tags_id)
 
+
       //para coger el resultado de tags utilizar tags[0] ACUERDATE PAPI
 
     }

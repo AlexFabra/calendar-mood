@@ -1,8 +1,7 @@
 import {formatDate} from '@angular/common';
-import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
+import {Component, Inject, LOCALE_ID} from '@angular/core';
 import {form_answers} from '../interfaces/form_answers.interface';
 import {SqlConnectorService} from "../services/sql-connector.service";
-
 
 interface Tag {
   name: string;
@@ -15,7 +14,7 @@ interface Tag {
   styleUrls: []
 })
 
-export class Tab1Page implements OnInit {
+export class Tab1Page {
   questions = ["", "", "", "", ""];
   answers = ["", "", "", "", ""];
   tags = [];
@@ -25,7 +24,7 @@ export class Tab1Page implements OnInit {
   constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService) {
   }
 
-  async ngOnInit() {
+  ionViewWillEnter(){
     this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
       this.questions = Object.keys(resJson).map((key) => {

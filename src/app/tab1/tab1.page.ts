@@ -39,21 +39,26 @@ export class Tab1Page implements OnInit {
     this.questions=this.questions.filter(question => question != "")
     //definim la longitud de les respostes segons la longitud de les preguntes:
     this.answers.length=this.questions.length;
-//todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
+    this.refreshForm();
 
+
+  }
+
+  public async refreshForm(){
+    console.log("REFRESH FORM")
+    //todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
     const lastAnswer = await this.sql.getAnswersFromDate(this.formattedCurrentDate)
 
     if(!this.sql.isEmpty(lastAnswer)){
       console.log(lastAnswer[0])
       const tags = await this.sql.getUserTagFromId(lastAnswer[0].user_tags_id)
+      console.log(tags[0], "tag[0]")
 
 
       //para coger el resultado de tags utilizar tags[0] ACUERDATE PAPI
 
     }
   }
-
-
 
   //color per defecte del component ion-range:
   public color: string = "tertiary";

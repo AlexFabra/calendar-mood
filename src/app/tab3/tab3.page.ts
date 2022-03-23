@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { BarChart, LineChart, PieChart, PieSeriesOption } from "echarts/charts";
-import { EChartsOption } from 'echarts';
-import { TooltipComponent, GridComponent, LegendComponent } from "echarts/components";
-import { PickerController } from "@ionic/angular";
-import { PickerOptions } from "@ionic/core";
-import { SqlConnectorService } from '../services/sql-connector.service';
-import { DatePipe } from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {BarChart, LineChart, PieChart, PieSeriesOption} from "echarts/charts";
+import {EChartsOption} from 'echarts';
+import {TooltipComponent, GridComponent, LegendComponent} from "echarts/components";
+import {PickerController} from "@ionic/angular";
+import {PickerOptions} from "@ionic/core";
+import {SqlConnectorService} from '../services/sql-connector.service';
+import {DatePipe} from '@angular/common';
 
 
 @Component({
@@ -26,15 +26,15 @@ export class Tab3Page implements OnInit {
   currentYear: number = this.currentDate.getFullYear();
   currentMonth: number = this.currentDate.getMonth() + 1;
 
-  selectedMonth: String=this.monthOptions[this.currentMonth];
+  selectedMonth: String = this.monthOptions[this.currentMonth];
   selectedYear: String = this.currentYear.toString();
 
-  unselected:boolean=true;
+  unselected: boolean = true;
 
   numColumns: number = 2; // number of columns to display on picker over lay
   numOptions: number = 5  // number of items (or rows) to display on
 
-  constructor(private pickerCtrl: PickerController,private sql: SqlConnectorService, private datePipe: DatePipe) {
+  constructor(private pickerCtrl: PickerController, private sql: SqlConnectorService, private datePipe: DatePipe) {
     this.echartsExtentions = [
       BarChart,
       LineChart,
@@ -45,42 +45,21 @@ export class Tab3Page implements OnInit {
     ];
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+  }
 
+  async ionViewWillEnter() {
     const formattedDate = this.obtainFormattedDate(this.currentDate)
-    
-    await this.sql.getTagQuantFromDate(formattedDate,"tristesa")
 
-    var data = [
-      {
-        name: 'Apatia',
-        value: 10
-      },
-      {
-        name: 'Solitud',
-        value: 10
-      },
-      {
-        name: 'Alegria',
-        value: 20
-      },
-      {
-        name: 'Calidessa',
-        value: 30
-      },
-      {
-        name: 'Serendipia',
-        value: 20
-      },
-      {
-        name: 'Tristessa',
-        value: 10
-      },
-      {
-        name: 'Inquietud',
-        value: 18
-      }
-    ];
+    const tags = await this.sql.getAllTags();
+
+    let data = []
+
+    //Agafem tots els tags i comprovem la quantitat d'aquests per mes i els afegim a l'array de Json 'data'
+    for (const tag of tags) {
+      const tagQuant = await this.sql.getTagQuantFromDate(formattedDate, tag.name)
+      data.push({name: tag.name, value: tagQuant})
+    }
 
     this.option = {
       series: [
@@ -115,6 +94,7 @@ export class Tab3Page implements OnInit {
         }
       ],
     };
+
   }
 
   async showPicker() {
@@ -153,13 +133,13 @@ export class Tab3Page implements OnInit {
 
     let picker = await this.pickerCtrl.create(opts);
     picker.present();
-    this.unselected=false;
+    this.unselected = false;
   }
 
   getMonthOptions() {
     let options = [];
     this.monthOptions.forEach(x => {
-      options.push({ text: x, value: x });
+      options.push({text: x, value: x});
     });
     return options;
   }
@@ -167,7 +147,7 @@ export class Tab3Page implements OnInit {
   getYearOptions() {
     let options = [];
     this.yearOptions.forEach(x => {
-      options.push({ text: x, value: x });
+      options.push({text: x, value: x});
     });
     return options;
   }
@@ -175,16 +155,16 @@ export class Tab3Page implements OnInit {
   changeDate(month, year) {
     this.selectedMonth = month;
     this.selectedYear = year;
-    this.unselected=true;
+    this.unselected = true;
   }
 
-    /** donada una Date, retorna un string que representa una data en format '__/01/2021'
+  /** donada una Date, retorna un string que representa una data en format '__/01/2021'
    * @returns string
    */
-     public obtainFormattedDate(date:Date): string{
-      const formattedDate = this.datePipe.transform(date,'dd/MM/yyyy');
-      var fdModified = '__'+formattedDate.substring(2,formattedDate.length);
-      return fdModified;
-    }
+  public obtainFormattedDate(date: Date): string {
+    const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+    var fdModified = '__' + formattedDate.substring(2, formattedDate.length);
+    return fdModified;
+  }
 
 }

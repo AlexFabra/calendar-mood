@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatCalendarCellClassFunction } from '@angular/material/datepicker';
+import { Component, ViewChild } from '@angular/core';
+import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import './tab2.page.css';
 
 import { DateAdapter } from "@angular/material/core";
@@ -13,16 +13,28 @@ import { SqlConnectorService } from '../services/sql-connector.service';
 })
 export class Tab2Page {
 
+  @ViewChild('monthCalendar') monthCalendar!: MatCalendar<Date>;
   monthView: Date = new Date();
   selectedDate: String;
   selected: Date = new Date();
   moods = [];
 
+  /**cada vegada que s'entri a aquesta funció s'actualitzarà el calendari.
+    *  aixó implica que les classes del calendari també, pel que quan es registri un formulari
+    *  el canvi al calendari apareixerà al entrar. 
+   */
+  ionViewWillEnter() {
+    let formattedDate = this.obtainFormattedDate(this.monthView)
+    //obtenim els moods:
+    this.sql.getMoodFromDate(formattedDate).then((res) => { this.moods = res })
+    //actualitzem el calendari:
+    this.monthCalendar.updateTodaysDate();
+  }
+
   constructor(date: DateAdapter<Date>, private datePipe: DatePipe, private sql: SqlConnectorService) {
     //canvia el dia d'inici de la setmana a dilluns:
     date.getFirstDayOfWeek = () => 1;
-    let formattedDate = this.obtainFormattedDate(this.monthView)
-    this.sql.getMoodFromDate(formattedDate).then((res) => { this.moods = res })
+
   }
 
   /** Assignar classes segons el dia.
@@ -50,10 +62,11 @@ export class Tab2Page {
     }
 
     this.moods.map((day) => {
+      console.log(day, day.date, day.mood)
       if (day.date === formattedDate) {
-        console.log("trobada data",day.date,"amb mood",day.mood)
-        style="mood"+day.mood;
-        console.log("estil",style)
+        console.log("trobada data", day.date, "amb mood", day.mood)
+        style = "mood" + day.mood;
+        console.log("estil", style)
       }
     })
     return style;

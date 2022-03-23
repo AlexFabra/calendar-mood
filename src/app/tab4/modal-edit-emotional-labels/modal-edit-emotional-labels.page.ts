@@ -48,11 +48,9 @@ export class ModalEditEmotionalLabelsPage {
    */
   public async getTags() {
     this.tags = []
-    console.log("getTags");
 
     //obtenim els tags de la base de dades:
     this.sql.getAllTags().then((res) => {
-      console.log(res[0], "RESSSS");
       const resJSON = res;
       for (const tag of resJSON) {
         this.tags.push(tag.name)

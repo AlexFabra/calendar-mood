@@ -64,19 +64,20 @@ export class SqlConnectorService {
       t5: "tranquilo"
     }
 
-    if (this.isEmpty(await this.getLastQuestions()[0])) {
+    if (this.isEmpty(await this.getLastQuestions())) {
       this.insertBasicForm()
+      console.log("BASIC FORMS INSERTED")
     }
-    if (this.isEmpty(await this.getLastTag()[0])) { //todo: comprovar si es isEmpty o lenght == 0
+    if (this.isEmpty(await this.getLastTag())) { //todo: comprovar si es isEmpty o lenght == 0
       this.insertBasicTag()
       console.log("BASIC TAG INSERTED")
     }
 
     // await this.insertUserTags(tags)
 
-    console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
+    /*console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
     console.log(await this.getLastQuestions(), "LAST QUESTIONS")
-    console.log(await this.getLastUserTags(), "LAST TAG")
+    console.log(await this.getLastUserTags(), "LAST TAG")*/
   }
 
   async getAllRows() {

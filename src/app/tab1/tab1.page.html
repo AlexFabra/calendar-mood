@@ -31,7 +31,7 @@
   </ion-item>
 
   <ion-item>
-    <ion-label>Sentiments viscuts avui</ion-label>
+    <ion-label>Emocions viscudes avui</ion-label>
     <ion-select ok-text="Acceptar" cancel-text="Cancelar" multiple="true" [(ngModel)]="selectedTags" selectedText=" ">
       <ion-select-option *ngFor="let tag of tags" [value]="tag.name">
         {{tag.name}}

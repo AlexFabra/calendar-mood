@@ -21,7 +21,7 @@ export class Tab2Page {
 
   /**cada vegada que s'entri a aquesta funció s'actualitzarà el calendari.
     *  aixó implica que les classes del calendari també, pel que quan es registri un formulari
-    *  el canvi al calendari apareixerà al entrar. 
+    *  el canvi al calendari apareixerà al entrar.
    */
   ionViewWillEnter() {
     let formattedDate = this.obtainFormattedDate(this.monthView)
@@ -73,8 +73,8 @@ export class Tab2Page {
   }
 
   /** donada una Date, retorna un string que representa una data en format '__/01/2021'
-* @returns string
-*/
+   * @returns string
+   */
   public obtainFormattedDate(date: Date): string {
     const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
     var fdModified = '__' + formattedDate.substring(2, formattedDate.length);

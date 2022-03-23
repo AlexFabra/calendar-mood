@@ -33,7 +33,7 @@ PRIMARY KEY("id" AUTOINCREMENT)
 export const createFormAnswers = `
 CREATE TABLE IF NOT EXISTS "form_answers" (
 "id" INTEGER,
-"date" TEXT,
+"date" TEXT UNIQUE,
 "form_id" INTEGER,
 "user_tags_id" INTEGER,
 "answer1" TEXT,

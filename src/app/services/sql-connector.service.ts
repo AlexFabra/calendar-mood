@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
-import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Platform} from '@ionic/angular';
+import {SQLite, SQLiteObject} from '@awesome-cordova-plugins/sqlite/ngx';
+import {HttpClient} from '@angular/common/http';
+import {BehaviorSubject} from 'rxjs';
 import {
   createForm,
   createFormAnswers,
@@ -10,8 +10,8 @@ import {
   createTags,
   createUserTags
 } from '../../assets/createTableVariables';
-import { addWarning } from "@angular-devkit/build-angular/src/utils/webpack-diagnostics";
-import { isEmpty } from "rxjs/operators";
+import {addWarning} from "@angular-devkit/build-angular/src/utils/webpack-diagnostics";
+import {isEmpty} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -37,8 +37,8 @@ export class SqlConnectorService {
           console.log("database created")
           await this.createTable();
         }).catch((e) => {
-          console.log("ERROR CREATING DATABASE");
-        });
+        console.log("ERROR CREATING DATABASE");
+      });
     });
   }
 
@@ -75,9 +75,9 @@ export class SqlConnectorService {
 
     // await this.insertUserTags(tags)
 
-    /*console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
+    console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
     console.log(await this.getLastQuestions(), "LAST QUESTIONS")
-    console.log(await this.getLastUserTags(), "LAST TAG")*/
+    console.log(await this.getLastUserTags(), "LAST TAG")
   }
 
   async getAllRows() {
@@ -104,14 +104,14 @@ export class SqlConnectorService {
         console.log("data inserted");
 
       }).catch((e) => {
-        if (e === 6) {
-          console.log("category already exists")
-        } else {
-          console.log("ERROR INSERTING")
-          console.log(e)
-        }
+      if (e === 6) {
+        console.log("category already exists")
+      } else {
+        console.log("ERROR INSERTING")
+        console.log(e)
+      }
 
-      });
+    });
   }
 
   /*insertRow(){
@@ -339,6 +339,7 @@ export class SqlConnectorService {
     return moods;
   }
 
+
   async insertAnswer(answers) {
     const lastForm = await this.getLastQuestions();
     const formId = lastForm[0].id;
@@ -348,12 +349,24 @@ export class SqlConnectorService {
     const lastTag = await this.getLastUserTags();
     const userTagId = lastTag[0].id;
 
-    this.databaseObj.executeSql(
-      `
-        INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4, answer5)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    //En cas d'existir una resposta al mateix dia fa un update sino un instert
+    if (await this.isThereAnAnswerFromDate(answers.date)){
+      this.databaseObj.executeSql(
+        `
+        UPDATE 'form_answers'
+        SET form_id = ?, user_tags_id = ?, date = ?, percentage = ?, answer1 = ?, answer2 = ?, answer3 = ?,
+                    answer4 = ?, answer5 = ?
+        WHERE date = ? ;
       `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
-      answers.a5]);
+          answers.a5, answers.date])
+    }else{
+      this.databaseObj.executeSql(
+        `
+        INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4, answer5)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?) ;
+      `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
+          answers.a5]);
+    }
   }
 
   async insertUserTags(tags) {
@@ -362,8 +375,8 @@ export class SqlConnectorService {
         INSERT INTO 'user_tags'(tag1, tag2, tag3, tag4, tag5)
         values (?, ?, ?, ?, ?);
       `, [tags.t1, tags.t2, tags.t3, tags.t4, tags.t5]).catch((e) => {
-        console.log("ERROR:", e)
-      });
+      console.log("ERROR:", e)
+    });
   }
 
   async insertQuestions(questions) {
@@ -394,7 +407,7 @@ export class SqlConnectorService {
         INSERT INTO 'form'(question1, question2, question3, question4, question5)
         values (?, ?, ?, ?, ?);
       `, ["Què has fet avui?", "Què t'ha fet sentir així?", "Què sents que has fet bé?", "Què creus que pots millorar?",
-      "Canviaries alguna cosa?"]
+        "Canviaries alguna cosa?"]
     );
   }
 
@@ -418,9 +431,9 @@ export class SqlConnectorService {
         INSERT INTO 'tags'(name)
         values (?);`
       , [tag]
-    ).then(() => {
+    ).then(() =>{
       console.log("INSTERT TAG WORKING")
-    }).catch((e) => {
+    }).catch((e) =>{
       console.log("ERROR INSTERTING TAG")
       console.log(e)
     });
@@ -434,12 +447,17 @@ export class SqlConnectorService {
         WHERE name = (?);
       `,
       [tag]
-    ).then(() => {
+    ).then(() =>{
       console.log("DELETE TAG WORKING")
-    }).catch((e) => {
+    }).catch((e) =>{
       console.log("ERROR DELETING TAG")
       console.log(e)
     });
+  }
+
+  async isThereAnAnswerFromDate(date){
+    if (this.isEmpty(await this.getAnswersFromDate(date))) return false;
+    else return true;
   }
 
   isEmpty(x) {

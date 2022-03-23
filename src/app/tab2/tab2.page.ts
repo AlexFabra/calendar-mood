@@ -16,14 +16,13 @@ export class Tab2Page {
   monthView: Date = new Date();
   selectedDate: String;
   selected: Date = new Date();
-  moods:[]=[];
+  moods = [];
 
-  constructor(date: DateAdapter<Date>, datePipe: DatePipe, private sql: SqlConnectorService) {
+  constructor(date: DateAdapter<Date>, private datePipe: DatePipe, private sql: SqlConnectorService) {
     //canvia el dia d'inici de la setmana a dilluns:
     date.getFirstDayOfWeek = () => 1;
-
     let formattedDate = this.obtainFormattedDate(this.monthView)
-    this.sql.getMoodFromDate(formattedDate).then((res)=>{this.moods=res})
+    this.sql.getMoodFromDate(formattedDate).then((res) => { this.moods = res })
   }
 
   /** Assignar classes segons el dia.
@@ -32,6 +31,8 @@ export class Tab2Page {
    * @returns nom de la classe que se li aplicarà al dia seleccionat.
    */
   dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
+
+    const formattedDate = this.datePipe.transform(cellDate, 'dd/MM/yyyy');
 
     let style: String = '';
     // Només és si la vista del mes:
@@ -47,16 +48,24 @@ export class Tab2Page {
         style = 'dissabte';
       }
     }
+
+    this.moods.map((day) => {
+      if (day.date === formattedDate) {
+        console.log("trobada data",day.date,"amb mood",day.mood)
+        style="mood"+day.mood;
+        console.log("estil",style)
+      }
+    })
     return style;
   }
 
-    /** donada una Date, retorna un string que representa una data en format '__/01/2021'
- * @returns string
- */
-     public obtainFormattedDate(date: Date): string {
-      const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
-      var fdModified = '__' + formattedDate.substring(2, formattedDate.length);
-      return fdModified;
-    }
+  /** donada una Date, retorna un string que representa una data en format '__/01/2021'
+* @returns string
+*/
+  public obtainFormattedDate(date: Date): string {
+    const formattedDate = this.datePipe.transform(date, 'dd/MM/yyyy');
+    var fdModified = '__' + formattedDate.substring(2, formattedDate.length);
+    return fdModified;
+  }
 
 }

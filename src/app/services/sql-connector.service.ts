@@ -333,7 +333,7 @@ export class SqlConnectorService {
     answersFromDate = await this.getAnswersFromDate(date);
     if (!answersFromDate.isEmpty) {
       for (const answer of answersFromDate) {
-        moods.push(answer.date, answer.percentage)
+        moods.push({date:answer.date, mood:answer.percentage})
       }
     }
     return moods;
@@ -342,7 +342,6 @@ export class SqlConnectorService {
   async insertAnswer(answers) {
     const lastForm = await this.getLastQuestions();
     const formId = lastForm[0].id;
-
 
     await this.insertUserTags(answers.tags) //todo: hacer insert de los tags del usuario
 

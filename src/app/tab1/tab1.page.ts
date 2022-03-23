@@ -145,7 +145,7 @@ export class Tab1Page {
     this.rangeValue = value.detail.value
     switch (value.detail.value) {
       case 0:
-        this.color = "dark"
+        this.color = "mood"+value.detail.value
         break;
       case 1:
         this.color = "dark"

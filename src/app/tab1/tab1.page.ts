@@ -18,6 +18,7 @@ interface Tag {
 export class Tab1Page implements OnInit {
   questions = ["", "", "", "", ""];
   answers = ["", "", "", "", ""];
+  tags = [];
   currentDate: Date = new Date();
   formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
 
@@ -41,6 +42,12 @@ export class Tab1Page implements OnInit {
     this.answers.length=this.questions.length;
     this.refreshForm();
 
+    this.sql.getAllTags().then((res) => {
+      const resJSON = res;
+      for (const tag of resJSON) {
+        this.tags.push(tag.name)
+      }
+    })
 
   }
 
@@ -65,15 +72,7 @@ export class Tab1Page implements OnInit {
   //variable que guarda l'estat d'ànim general diari de l'usuari:
   rangeValue: number = 5;
 
-  public tags: Tag[] = [
-    {name: "alegria", color: "primary"},
-    {name: "tristessa", color: "tertiary"},
-    {name: "pau", color: "light"},
-    {name: "serenitat", color: "dark"},
-    {name: "ira", color: "blue"},
-    {name: "ràbia", color: "red"},
-    {name: "inquietud", color: "blue"}
-  ]
+
 
   public selectedTags: String[] = [];
 

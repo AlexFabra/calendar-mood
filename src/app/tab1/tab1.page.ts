@@ -63,7 +63,6 @@ export class Tab1Page {
       this.selectedTags = [];
       Object.keys(tagsJSON).map((key) => {
         if (key === 'id' || tagsJSON[key] == '') {
-          console.log(tagsJSON[key])
         } else {
           this.selectedTags.push(tagsJSON[key])
         }

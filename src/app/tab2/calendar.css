@@ -34,8 +34,7 @@
     font-weight:600;
 }
 ::ng-deep.mood5 {
-    background: rgb(189, 99, 224) !important;
-    background-color: rgb(189, 99, 224) !important;
+    background: rgb(189, 99, 224) ;
     border-radius: 0%;
     font-weight:600;
 }
@@ -55,8 +54,7 @@
     font-weight:600;
 }
 ::ng-deep.mood8 {
-    background: rgb(233, 185, 185) !important;
-    background-color: rgb(233, 185, 185) !important;
+    background: rgb(233, 185, 185);
     border-radius: 0%;
     font-weight:600;
 }

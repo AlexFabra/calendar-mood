@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ModalController} from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {SqlConnectorService} from "../../services/sql-connector.service";
 
 @Component({
@@ -10,7 +10,7 @@ import {SqlConnectorService} from "../../services/sql-connector.service";
 export class ModalEditFormPage implements OnInit {
   questions = [];
 
-  constructor(private modalController: ModalController, private sql: SqlConnectorService) {
+  constructor(private modalController: ModalController, private sql: SqlConnectorService,public alertController: AlertController) {
   }
 
   ngOnInit() {
@@ -34,9 +34,11 @@ export class ModalEditFormPage implements OnInit {
     await this.modalController.dismiss(close);
   }
 
+  /** guardar guarda les preguntes posades i les envia a la bdd per que 
+   *  actualitzi el formulari
+   */
   public guardar() {
-    console.log(this.questions)
-
+    //posem les noves preguntes a un JSON per passarles al backend:
     var questionsJSON = {
       q1: this.questions[0],
       q2: this.questions[1],
@@ -45,8 +47,22 @@ export class ModalEditFormPage implements OnInit {
       q5: this.questions[4],
     }
 
+    //si s'inserten les noves preguntes activem l'alert:
     this.sql.insertQuestions(questionsJSON).then((res) => {
-      console.log("formulari actualitzat")
+      this.presentAlert();  
     })
+  }
+
+  /** crea un alert
+   */
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Preguntes actualitzades',
+      subHeader: '',
+      message: '',
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 }

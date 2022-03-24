@@ -1,5 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID } from '@angular/core';
+import { AlertController } from '@ionic/angular';
 import { form_answers } from '../interfaces/form_answers.interface';
 import { SqlConnectorService } from "../services/sql-connector.service";
 
@@ -21,7 +22,7 @@ export class Tab1Page {
   currentDate: Date = new Date();
   formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
 
-  constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService) {
+  constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService,public alertController: AlertController) {
   }
 
   ionViewWillEnter() {
@@ -79,6 +80,17 @@ export class Tab1Page {
 
     }
 
+  }
+
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Registre guardat',
+      subHeader: '',
+      message: '',
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   //color per defecte del component ion-range:

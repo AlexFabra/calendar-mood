@@ -32,7 +32,7 @@ export class Tab1Page {
     this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
       this.questions = Object.keys(resJson).map((key) => {
-          return resJson[key];
+        return resJson[key];
       })
       this.questions.splice(0, 1)
       return res;
@@ -174,7 +174,12 @@ export class Tab1Page {
     }
   }
 
-
+  /**
+     * Funció que donat un JSON amb els tags seleccionats per l'usuari retorna un JSON amb un JSON amb tots
+     * els elements necessaris per poder enviar-lo a la BDD
+     * @param JSONSelectedTags
+     * @return json
+     */
   public createFormAnswers(JSONselectedTags) {
     const form: form_answers =
     {

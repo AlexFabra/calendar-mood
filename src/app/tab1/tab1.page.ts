@@ -16,8 +16,8 @@ interface Tag {
 })
 
 export class Tab1Page {
-  questions = ["", "", "", "", ""];
-  answers = ["", "", "", "", ""];
+  questions = [];
+  answers = [];
   tags = [];
   currentDate: Date = new Date();
   formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
@@ -25,19 +25,21 @@ export class Tab1Page {
   constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService, public alertController: AlertController) {
   }
 
+  /** cada vegada que s'entra a la pàgina s'executa aquesta funció:
+   */
   ionViewWillEnter() {
+    //obtenim últimes preguntes registrades a la bdd:
     this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
       this.questions = Object.keys(resJson).map((key) => {
-        return resJson[key];
+          return resJson[key];
       })
       this.questions.splice(0, 1)
-
       return res;
     });
 
     //esborrem de l'array els llocs que estàn buits ( si n'hi ha):
-    this.questions = this.questions.filter(question => question != "")
+    this.questions = this.questions.filter(question => question.trim() !== "")
     //definim la longitud de les respostes segons la longitud de les preguntes:
     this.answers.length = this.questions.length;
     this.refreshForm();
@@ -82,8 +84,8 @@ export class Tab1Page {
 
   }
 
-    /** crea un alert que mostra a l'usuari que el registre s'ha guardat
-   */
+  /** crea un alert que mostra a l'usuari que el registre s'ha guardat
+ */
   async presentAlert() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',

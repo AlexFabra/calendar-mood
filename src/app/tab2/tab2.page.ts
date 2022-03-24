@@ -61,33 +61,36 @@ export class Tab2Page {
       }
     }
 
+    //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
     this.moods.map((day) => {
-      console.log(day, day.date, day.mood)
       if (day.date === formattedDate) {
-        console.log("trobada data", day.date, "amb mood", day.mood)
+        console.log('mood'+day.mood)
         style = 'mood' + day.mood;
-        console.log("estil", style)
       }
     })
+
     return style;
   }
 
-  /** funció del component matCalendar que s'activa quan es clica una data del calendari.
-   *  s'utilitza com a trigger per obtenir de la bdd el registre del dia (si n'hi ha)
-   * @param event 
-   */
   async getChangedValue(event: Date | null) {
     //obtenim el dia amb el format que espera com a paràmetre la funció del backend corresponent
     const selectedDay: string = this.datePipe.transform(event, 'dd/MM/yyyy');
     const answer = await this.sql.getAnswersFromDate(selectedDay)
-    answer[0];
+    // answer[0];
+    let formId;
+    if (!this.sql.isEmpty(answer[0])) formId = answer[0].form_id
+    else return
+
+    const questions = await this.sql.getQuestionsFromId(formId)
+
     //obtenim els tags del dia:
     const tags = await this.sql.getUserTagFromId(answer[0].user_tags_id)
       console.log(tags[0])
     //obtenim les preguntes del dia:
-    
+
     //obtenim les respostes del dia:
 
+    this.monthCalendar.updateTodaysDate();
   }
 
   /** donada una Date, retorna un string que representa una data en format '__/01/2021'

@@ -1,7 +1,7 @@
-import {formatDate} from '@angular/common';
-import {Component, Inject, LOCALE_ID} from '@angular/core';
-import {form_answers} from '../interfaces/form_answers.interface';
-import {SqlConnectorService} from "../services/sql-connector.service";
+import { formatDate } from '@angular/common';
+import { Component, Inject, LOCALE_ID } from '@angular/core';
+import { form_answers } from '../interfaces/form_answers.interface';
+import { SqlConnectorService } from "../services/sql-connector.service";
 
 interface Tag {
   name: string;
@@ -24,7 +24,7 @@ export class Tab1Page {
   constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService) {
   }
 
-  ionViewWillEnter(){
+  ionViewWillEnter() {
     this.sql.getLastQuestions().then((res) => {
       let resJson = res[0]
       this.questions = Object.keys(resJson).map((key) => {
@@ -36,9 +36,9 @@ export class Tab1Page {
     });
 
     //esborrem de l'array els llocs que estàn buits ( si n'hi ha):
-    this.questions=this.questions.filter(question => question != "")
+    this.questions = this.questions.filter(question => question != "")
     //definim la longitud de les respostes segons la longitud de les preguntes:
-    this.answers.length=this.questions.length;
+    this.answers.length = this.questions.length;
     this.refreshForm();
 
     this.sql.getAllTags().then((res) => {
@@ -47,23 +47,39 @@ export class Tab1Page {
         this.tags.push(tag.name)
       }
     })
-
   }
 
-  public async refreshForm(){
-    console.log("REFRESH FORM")
+  public async refreshForm() {
     //todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
     const lastAnswer = await this.sql.getAnswersFromDate(this.formattedCurrentDate)
+    //si lastAnswer no és vuida, obtenim els tags i les respostes d'ella
+    if (!this.sql.isEmpty(lastAnswer)) {
 
-    if(!this.sql.isEmpty(lastAnswer)){
       console.log(lastAnswer[0])
-      const tags = await this.sql.getUserTagFromId(lastAnswer[0].user_tags_id)
-      console.log(tags[0], "tag[0]")
 
+      //obtenim els tags registrats del dia actual:
+      const tagsArray = await this.sql.getUserTagFromId(lastAnswer[0].user_tags_id)
+      const tagsJSON = tagsArray[0]
+      this.selectedTags = [];
+      Object.keys(tagsJSON).map((key) => {
+        if (key === 'id' || tagsJSON[key] == '') {
+          console.log(tagsJSON[key])
+        } else {
+          this.selectedTags.push(tagsJSON[key])
+        }
+      })
 
-      //para coger el resultado de tags utilizar tags[0] ACUERDATE PAPI
+      //obtenim les respostes registrades al dia actual:
+      const lastAnswersJson = lastAnswer[0];
+      this.answers = [];
+      Object.keys(lastAnswersJson).map((key) => {
+        if (key.includes("answer") && lastAnswersJson[key] !== '') {
+          this.answers.push(lastAnswersJson[key])
+        }
+      })
 
     }
+
   }
 
   //color per defecte del component ion-range:
@@ -96,16 +112,16 @@ export class Tab1Page {
     }
 
     const form: form_answers =
-      {
-        date: this.formattedCurrentDate,
-        percentage: this.rangeValue,
-        tags: JSONselectedTags,
-        a1: this.answers[0],
-        a2: this.answers[1],
-        a3: this.answers[2],
-        a4: this.answers[3],
-        a5: this.answers[4]
-      }
+    {
+      date: this.formattedCurrentDate,
+      percentage: this.rangeValue,
+      tags: JSONselectedTags,
+      a1: this.answers[0],
+      a2: this.answers[1],
+      a3: this.answers[2],
+      a4: this.answers[3],
+      a5: this.answers[4]
+    }
 
     const questionsJson = {
       q1: this.questions[0],
@@ -143,7 +159,7 @@ export class Tab1Page {
     this.rangeValue = value.detail.value
     switch (value.detail.value) {
       case 0:
-        this.color = "mood"+value.detail.value
+        this.color = "mood" + value.detail.value
         break;
       case 1:
         this.color = "dark"

@@ -9,7 +9,7 @@ import { SqlConnectorService } from 'src/app/services/sql-connector.service';
 })
 export class ModalEditEmotionalLabelsPage {
 
-  newLabel: String = "";
+  newLabel: string = "";
 
   tags: String[] = ["pau","ràbia","decepció","sol·litud","calidessa","alegria","tristessa","nostàlgia","angoixa","serenitat","inquietud"]
 
@@ -32,7 +32,7 @@ export class ModalEditEmotionalLabelsPage {
    *  i actualitza els tags
    * @param tag
    */
-  public deleteLabel(tag: String) {
+  public deleteLabel(tag: string) {
     this.sql.deleteTag(tag).then((res)=>this.getTags());
   }
 

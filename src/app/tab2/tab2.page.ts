@@ -18,6 +18,10 @@ export class Tab2Page {
   selectedDate: String;
   selected: Date = new Date();
   moods = [];
+  questions = [];
+  answers = [];
+  mood;
+  tags = []
 
   /**cada vegada que s'entri a aquesta funció s'actualitzarà el calendari.
     *  aixó implica que les classes del calendari també, pel que quan es registri un formulari
@@ -29,6 +33,7 @@ export class Tab2Page {
     this.sql.getMoodFromDate(formattedDate).then((res) => { this.moods = res })
     //actualitzem el calendari:
     this.monthCalendar.updateTodaysDate();
+    this.getChangedValue(this.monthView);
   }
 
   constructor(date: DateAdapter<Date>, private datePipe: DatePipe, private sql: SqlConnectorService) {
@@ -64,7 +69,7 @@ export class Tab2Page {
     //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
     this.moods.map((day) => {
       if (day.date === formattedDate) {
-        console.log('mood'+day.mood)
+        console.log('mood' + day.mood)
         style = 'mood' + day.mood;
       }
     })
@@ -72,23 +77,59 @@ export class Tab2Page {
     return style;
   }
 
+  /** S'executa quan canvia el event clicat de matCalendar 
+   *  obté la informació del dia clicat
+   * @param event Date
+   */
   async getChangedValue(event: Date | null) {
+
+    //vuidem les preguntes i respostes:
+    this.questions = [];
+    this.answers = [];
+
     //obtenim el dia amb el format que espera com a paràmetre la funció del backend corresponent
     const selectedDay: string = this.datePipe.transform(event, 'dd/MM/yyyy');
     const answer = await this.sql.getAnswersFromDate(selectedDay)
-    // answer[0];
-    let formId;
-    if (!this.sql.isEmpty(answer[0])) formId = answer[0].form_id
-    else return
 
-    const questions = await this.sql.getQuestionsFromId(formId)
+    let formId;
+    if (!this.sql.isEmpty(answer[0])) {
+      //guardem el id per obtenir les preguntes:
+      formId = answer[0].form_id
+    }
+
+    //guardem les respostes organitzades:
+    this.guardarRespostes(answer);
+
+    //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
+    this.moods.map((day) => {
+      if (day.date === selectedDay) {
+        this.mood = day.date;
+      }
+    })
+
+    //obtenim les preguntes:
+    await this.sql.getQuestionsFromId(formId).then((res) => {
+      if (!this.sql.isEmpty(res[0])) {
+        let resJson = res[0]
+        this.questions = Object.keys(resJson).map((key) => {
+          return resJson[key];
+        })
+        this.questions.splice(0, 1)
+        return res;
+      }
+    });
 
     //obtenim els tags del dia:
-    const tags = await this.sql.getUserTagFromId(answer[0].user_tags_id)
-      console.log(tags[0])
-    //obtenim les preguntes del dia:
-
-    //obtenim les respostes del dia:
+    const tags = await this.sql.getUserTagFromId(answer[0].user_tags_id).then((res) => {
+      if (!this.sql.isEmpty(res[0])) {
+        let resJson = res[0]
+        this.tags = Object.keys(resJson).map((key) => {
+          return resJson[key];
+        })
+        this.tags.splice(0, 1)
+        return res;
+      }
+    });
 
     this.monthCalendar.updateTodaysDate();
   }
@@ -102,4 +143,16 @@ export class Tab2Page {
     return fdModified;
   }
 
+  public guardarRespostes(answer): void {
+    //si la resposta del backend no és vuida:
+    if (!this.sql.isEmpty(answer[0])) {
+      //obtenim les respostes:
+      const lastAnswersJson = answer[0];
+      Object.keys(lastAnswersJson).map((key) => {
+        if (key.includes("answer") && lastAnswersJson[key] !== '') {
+          this.answers.push(lastAnswersJson[key])
+        }
+      })
+    }
+  }
 }

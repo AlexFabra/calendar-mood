@@ -79,9 +79,7 @@ export class Tab1Page {
           this.answers.push(lastAnswersJson[key])
         }
       })
-
     }
-
   }
 
   /** crea un alert que mostra a l'usuari que el registre s'ha guardat

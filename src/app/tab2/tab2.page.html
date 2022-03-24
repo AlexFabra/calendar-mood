@@ -14,11 +14,25 @@
       <ion-col lg-6 md-8>
         <div>
           <ion-card style="background-color: white;">
-            <mat-calendar #monthCalendar [(selected)]="selected" [dateClass]="dateClass" (selectedChange)="getChangedValue($event)"></mat-calendar>
+            <mat-calendar #monthCalendar [(selected)]="selected" [dateClass]="dateClass"
+              (selectedChange)="getChangedValue($event)"></mat-calendar>
           </ion-card>
         </div>
       </ion-col>
       <ion-col lg-3 md-2> </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-card style="background-color: white;">
+          <ion-card-content>
+            <p>Mood: {{mood}}</p>
+            <p>Emocions viscudes: {{tags}}</p>
+          </ion-card-content>
+        </ion-card>
+        <ion-item *ngFor="let question of questions; let i=index">
+          <p position="stacked"><b>{{question}}</b>{{answers[i]}}</p>
+        </ion-item>
+      </ion-col>
     </ion-row>
   </ion-grid>
 

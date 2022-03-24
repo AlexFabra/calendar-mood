@@ -26,6 +26,9 @@ export class SqlConnectorService {
     this.createDatabase();
   }
 
+  /**
+   * Funció de creació de la base de dades, aquesta crida a la funció de creació de les taules.
+   */
   async createDatabase() {
     await this.plt.ready().then(() => {
       this.sqlite.create({
@@ -42,13 +45,15 @@ export class SqlConnectorService {
     });
   }
 
+  /**
+   * Funció de creació de les taules, aquesta també crida a les funcions d'inserció dels primers elements de la bdd
+   * en cas d'estar buida.
+   */
   async createTable() {
     let tablesVariables = [createForm, createFormAnswers, createTags, createUserTags]
     for (const table of tablesVariables) {
       await this.databaseObj.executeSql(table, [])
-        .then(async () => {
-          console.log("tables created")
-        }).catch((e) => {
+        .catch((e) => {
           console.log("ERROR CREATING TABLE: " + table)
           console.log(e)
         });
@@ -56,30 +61,22 @@ export class SqlConnectorService {
 
     console.log("TABLES CREATED")
 
-    let tags = {
-      t1: "alegre",
-      t2: "triste",
-      t3: "nostalgico",
-      t4: "ansioso",
-      t5: "tranquilo"
-    }
-
+    //Si no hi ha cap pregunta se'n creen de bàsiques
     if (this.isEmpty(await this.getLastQuestions())) {
       this.insertBasicForm()
       console.log("BASIC FORMS INSERTED")
     }
-    if (this.isEmpty(await this.getLastTag())) { //todo: comprovar si es isEmpty o lenght == 0
+    //Si no hi ha cap tag se'n creen de bàsics
+    if (this.isEmpty(await this.getLastTag())) {
       this.insertBasicTag()
       console.log("BASIC TAG INSERTED")
     }
-
-    // await this.insertUserTags(tags)
-
-    console.log(await this.getAllRows(), "ALL ROWS") //ARRAY AMB L'ARRAY DE JSONS
-    console.log(await this.getLastQuestions(), "LAST QUESTIONS")
-    console.log(await this.getLastUserTags(), "LAST TAG")
   }
 
+  /**
+   * Funció que retorna totes les files de la taula 'form_answers'
+   * @returns array[json]
+   */
   async getAllRows() {
     return this.databaseObj.executeSql('SELECT * FROM form_answers;', [])
       .then((data) => {
@@ -88,6 +85,7 @@ export class SqlConnectorService {
         for (let i = 0; i < data.rows.length; i++) { //Agafem tots els resultats
           jsonResult.push(data.rows.item(i))
         }
+
         return jsonResult;
       }).catch((e) => {
         console.log("ERROR GETTING ALL ROWS")
@@ -96,30 +94,10 @@ export class SqlConnectorService {
       });
   }
 
-  async insertRow() {
-    this.databaseObj.executeSql(
-      'INSERT INTO \'form\'(question1, question2, question3, question4, question5) values(?,?,?,?,?) '
-      , ['a', 'b', 'c', 'd', 'e'])
-      .then(async () => {
-        console.log("data inserted");
-
-      }).catch((e) => {
-      if (e === 6) {
-        console.log("category already exists")
-      } else {
-        console.log("ERROR INSERTING")
-        console.log(e)
-      }
-
-    });
-  }
-
-  /*insertRow(){
-    this.databaseObj.executeSql(
-      "INSERT INTO 'form'(question1, question2, question3, question4, question5) values(?,?,?,?,?) "
-      , ['a','b','c','d','e']);
-  }*/
-
+  /**
+   * Funció que retorna l'última fila de preguntes de la taula 'form'
+   * @returns array[json]
+   */
   async getLastQuestions() {
     return this.databaseObj.executeSql(`
       SELECT *
@@ -136,14 +114,18 @@ export class SqlConnectorService {
         if (data.rows.length > 0) {
           questions.push(data.rows.item(0));
         }
-        return questions;
 
+        return questions;
       }).catch((e) => {
         console.log("ERROR GETTING LAST FORM")
         console.log(e)
       });
   }
 
+  /**
+   * Funció que retorna l'última fila de tags de l'usuari de la taula 'user_tags'
+   * @returns array[json]
+   */
   async getLastUserTags() {
     return this.databaseObj.executeSql(`
       SELECT *
@@ -160,14 +142,18 @@ export class SqlConnectorService {
         if (data.rows.length > 0) {
           tags.push(data.rows.item(0));
         }
-        return tags;
 
+        return tags;
       }).catch((e) => {
         console.log("ERROR GETTING LAST TAG")
         console.log(e)
       });
   }
 
+  /**
+   * Funció que retorna l'últim tag de la taula 'tags'
+   * @returns array[json]
+   */
   async getLastTag() {
     return this.databaseObj.executeSql(`
       SELECT *
@@ -184,14 +170,18 @@ export class SqlConnectorService {
         if (data.rows.length > 0) {
           tags.push(data.rows.item(0));
         }
-        return tags;
 
+        return tags;
       }).catch((e) => {
         console.log("ERROR GETTING LAST TAG")
         console.log(e)
       });
   }
 
+  /**
+   * Funció que retorna tots els tags de la taula 'tags'
+   * @returns array[json]
+   */
   async getAllTags() {
     return this.databaseObj.executeSql(`
         SELECT *
@@ -202,7 +192,7 @@ export class SqlConnectorService {
         for (let i = 0; i < data.rows.length; i++) { //Agafem tots els resultats
           jsonResult.push(data.rows.item(i))
         }
-        console.log(jsonResult, "JSONRESULT")
+
         return jsonResult;
       }).catch((e) => {
         console.log("ERROR GETTING ALL ROWS")
@@ -211,7 +201,12 @@ export class SqlConnectorService {
       });
   }
 
-  async getQuestionsFromId(id) {
+  /**
+   * Funció que donada una ID retorna les preguntes de la taula 'form'
+   * @param id number
+   * @returns array[json]
+   */
+  async getQuestionsFromId(id: number) {
     return this.databaseObj.executeSql(`
       SELECT *
       FROM form
@@ -223,15 +218,20 @@ export class SqlConnectorService {
         if (data.rows.length > 0) {
           questions.push(data.rows.item(0));
         }
-        return questions;
 
+        return questions;
       }).catch((e) => {
         console.log("ERROR GETTING QUESTION FROM ID")
         console.log(e)
       });
   }
 
-  async getUserTagFromId(id) {
+  /**
+   * Funció que donada una ID retorna els tags de la taula 'user_tags'
+   * @param id number
+   * @returns array[json]
+   */
+  async getUserTagFromId(id: number) {
     return this.databaseObj.executeSql(`
       SELECT *
       FROM user_tags
@@ -243,42 +243,20 @@ export class SqlConnectorService {
         if (data.rows.length > 0) {
           tag.push(data.rows.item(0));
         }
-        return tag;
 
+        return tag;
       }).catch((e) => {
         console.log("ERROR GETTING TAG FROM ID")
         console.log(e)
       });
   }
 
-  async getFormAnswerFromDate(date) {
-    //todo: PASAR DATE CON EL REGEX HECHO
-    return this.databaseObj.executeSql(`
-      SELECT *
-      FROM form_answers
-      WHERE date = ?
-      ;
-    `, [date])
-      .then(async (data) => {
-        const dataId = data.rows.item(0).id;
-        const questions = this.getQuestionsFromId(dataId);
-        const userTags = this.getUserTagFromId(dataId);
-
-        data.questions = questions
-        data.userTags = userTags
-
-        const answers = [];
-        answers.push(data.rows.item(0));
-
-        return answers;
-
-      }).catch((e) => {
-        console.log("ERROR GETTING ANSWER FROM DATE")
-        console.log(e)
-      });
-  }
-
-  async getAnswersFromDate(date) { //PASAR DATE CON REGEX HECHO
+  /**
+   * Funció que donada una data retorna les respostes de la taula 'form_answers'
+   * @param date string
+   * @returns array[json]
+   */
+  async getAnswersFromDate(date: string) {
     return this.databaseObj.executeSql(`
       SELECT *
       FROM form_answers
@@ -294,19 +272,39 @@ export class SqlConnectorService {
         }
 
         return answers;
-
       }).catch((e) => {
         console.log("ERROR GETTING ANSWER FROM DATE")
         console.log(e)
       });
   }
 
-  async getTagQuantFromDate(date, tag) {
+  /**
+   * Funció que donada una data retorna les el tant percent del mood de la taula 'form_answers'
+   * @param date string
+   * @returns array[json]
+   */
+  async getMoodFromDate(date: string) {
+    let answersFromDate: any;
+    let moods = []
+    answersFromDate = await this.getAnswersFromDate(date);
+    if (!answersFromDate.isEmpty) {
+      for (const answer of answersFromDate) {
+        moods.push({date: answer.date, mood: answer.percentage})
+      }
+    }
+    return moods;
+  }
+
+  /**
+   * Funció que donats una data i un tag retorna la quantitat de resultats amb el tag determinat
+   * @param date string, tag string
+   * @returns number
+   */
+  async getTagQuantFromDate(date: string, tag: string) {
     //todo: recibir cantidad de veces que se repite un tag a partir de una fecha
     let answersFromDate: any;
-    answersFromDate = await this.getAnswersFromDate(date);
-    // let tagsIds = [];
     let count = 0
+    answersFromDate = await this.getAnswersFromDate(date);
 
     for (const answer of answersFromDate) {
       await this.databaseObj.executeSql(`
@@ -327,19 +325,11 @@ export class SqlConnectorService {
     return count
   }
 
-  async getMoodFromDate(date) {
-    let answersFromDate: any;
-    let moods = []
-    answersFromDate = await this.getAnswersFromDate(date);
-    if (!answersFromDate.isEmpty) {
-      for (const answer of answersFromDate) {
-        moods.push({date:answer.date, mood:answer.percentage})
-      }
-    }
-    return moods;
-  }
 
-
+  /**
+   * Funció que donat un array de JSON amb les respostes, les inserta a la taula 'form_answers'
+   * @param answers array[json]
+   */
   async insertAnswer(answers) {
     const lastForm = await this.getLastQuestions();
     const formId = lastForm[0].id;
@@ -350,25 +340,37 @@ export class SqlConnectorService {
     const userTagId = lastTag[0].id;
 
     //En cas d'existir una resposta al mateix dia fa un update sino un instert
-    if (await this.isThereAnAnswerFromDate(answers.date)){
+    if (await this.isThereAnAnswerFromDate(answers.date)) {
       this.databaseObj.executeSql(
         `
-        UPDATE 'form_answers'
-        SET form_id = ?, user_tags_id = ?, date = ?, percentage = ?, answer1 = ?, answer2 = ?, answer3 = ?,
-                    answer4 = ?, answer5 = ?
-        WHERE date = ? ;
-      `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
+          UPDATE 'form_answers'
+          SET form_id = ?,
+              user_tags_id = ?,
+              date = ?,
+              percentage = ?,
+              answer1 = ?,
+              answer2 = ?,
+              answer3 = ?,
+              answer4      = ?,
+              answer5      = ?
+          WHERE date = ?;
+        `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
           answers.a5, answers.date])
-    }else{
+    } else {
       this.databaseObj.executeSql(
         `
-        INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4, answer5)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?) ;
-      `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
+          INSERT INTO 'form_answers'(form_id, user_tags_id, date, percentage, answer1, answer2, answer3, answer4,
+                                     answer5)
+          values (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `, [formId, userTagId, answers.date, answers.percentage, answers.a1, answers.a2, answers.a3, answers.a4,
           answers.a5]);
     }
   }
 
+  /**
+   * Funció que donat un JSON amb els tags, els inserta a la taula 'user_tags'
+   * @param tags json
+   */
   async insertUserTags(tags) {
     this.databaseObj.executeSql(
       `
@@ -379,6 +381,10 @@ export class SqlConnectorService {
     });
   }
 
+  /**
+   * Funció que donat un JSON amb les preguntes, les inserta a la taula 'form'
+   * @param questions json
+   */
   async insertQuestions(questions) {
     this.databaseObj.executeSql(
       `
@@ -387,20 +393,27 @@ export class SqlConnectorService {
       `, [questions.q1, questions.q2, questions.q3, questions.q4, questions.q5]);
   }
 
-  async getElements() {
-    const statement = `
-      SELECT *
-      FROM form
-    `;
-
-    return this.databaseObj.executeSql(statement);
+  /**
+   * Funció que donat un tag l'inserta a la taula 'tags'
+   * @param tag string
+   */
+  async insertTag(tag: string) {
+    this.databaseObj.executeSql(
+      `
+        INSERT INTO 'tags'(name)
+        values (?);`
+      , [tag]
+    ).then(() => {
+      console.log("INSTERT TAG WORKING")
+    }).catch((e) => {
+      console.log("ERROR INSTERTING TAG")
+      console.log(e)
+    });
   }
 
-  fistInserts() {
-    this.insertBasicForm()
-    this.insertBasicTag()
-  }
-
+  /**
+   * Funció que inserta les preguntes bàsiques a la taula 'form'
+   */
   async insertBasicForm() {
     this.databaseObj.executeSql(
       `
@@ -411,6 +424,9 @@ export class SqlConnectorService {
     );
   }
 
+  /**
+   * Funció que inserta els tags bàsiques a la taula 'tags'
+   */
   async insertBasicTag() {
     let tagNames = ["tristesa", "alegria", "serenitat", "calidesa", "distanciament", "orgull", "amor", "fúria",
       "remordiment", "por", "confiança", "fàstic"]
@@ -425,21 +441,11 @@ export class SqlConnectorService {
     }
   }
 
-  async insertTag(tag: String) {
-    this.databaseObj.executeSql(
-      `
-        INSERT INTO 'tags'(name)
-        values (?);`
-      , [tag]
-    ).then(() =>{
-      console.log("INSTERT TAG WORKING")
-    }).catch((e) =>{
-      console.log("ERROR INSTERTING TAG")
-      console.log(e)
-    });
-  }
-
-  async deleteTag(tag: String) {
+  /**
+   * Funció que donat un tag l'elimina a la taula 'tags'
+   * @param tag string
+   */
+  async deleteTag(tag: string) {
     this.databaseObj.executeSql(
       `
         DELETE
@@ -447,20 +453,30 @@ export class SqlConnectorService {
         WHERE name = (?);
       `,
       [tag]
-    ).then(() =>{
+    ).then(() => {
       console.log("DELETE TAG WORKING")
-    }).catch((e) =>{
+    }).catch((e) => {
       console.log("ERROR DELETING TAG")
       console.log(e)
     });
   }
 
-  async isThereAnAnswerFromDate(date){
+  /**
+   * Funció que donada una data busca si existeix una resposta amb aquesta data
+   * @param date string
+   * @return boolean
+   */
+  async isThereAnAnswerFromDate(date: string) {
     if (this.isEmpty(await this.getAnswersFromDate(date))) return false;
     else return true;
   }
 
-  isEmpty(x) {
+  /**
+   * Funció que donat un element determina si esta buit, es null o es undefined
+   * @param x any
+   * @return boolean
+   */
+  isEmpty(x: any) {
     if (x == undefined) {
       return true;
     }

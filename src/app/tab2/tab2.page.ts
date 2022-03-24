@@ -86,6 +86,8 @@ export class Tab2Page {
     //vuidem les preguntes i respostes:
     this.questions = [];
     this.answers = [];
+    this.mood=[];
+    this.tags=[];
 
     //obtenim el dia amb el format que espera com a paràmetre la funció del backend corresponent
     const selectedDay: string = this.datePipe.transform(event, 'dd/MM/yyyy');
@@ -103,7 +105,7 @@ export class Tab2Page {
     //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
     this.moods.map((day) => {
       if (day.date === selectedDay) {
-        this.mood = day.date;
+        this.mood = day.mood;
       }
     })
 

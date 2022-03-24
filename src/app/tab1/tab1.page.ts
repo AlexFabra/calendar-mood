@@ -22,7 +22,7 @@ export class Tab1Page {
   currentDate: Date = new Date();
   formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
 
-  constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService,public alertController: AlertController) {
+  constructor(@Inject(LOCALE_ID) public locale: string, private sql: SqlConnectorService, public alertController: AlertController) {
   }
 
   ionViewWillEnter() {
@@ -82,6 +82,8 @@ export class Tab1Page {
 
   }
 
+    /** crea un alert que mostra a l'usuari que el registre s'ha guardat
+   */
   async presentAlert() {
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -104,63 +106,28 @@ export class Tab1Page {
    *  envia al backend les dades
    */
   public async saveClick() {
-    //TODO: Enviar les dades a backend
-    // console.log(this.pregunta1);
-    // console.log(this.pregunta2);
-    // console.log(this.pregunta3)
-    // console.log(this.selectedTags)
 
     //obtenim els tags i els passem a un JSON:
     const JSONselectedTags = {
       t1: this.selectedTags[0], t2: this.selectedTags[1],
       t3: this.selectedTags[2], t4: this.selectedTags[3], t5: this.selectedTags[4],
     };
-
+    //si n'hi ha cap que sigui undefined, posem cometes:
     for (var clave in JSONselectedTags) {
       if (JSONselectedTags[clave] === undefined) {
         JSONselectedTags[clave] = "";
       }
     }
+    //creem el json amb les respostes del formulari:
+    const form = this.createFormAnswers(JSONselectedTags);
 
-    const form: form_answers =
-    {
-      date: this.formattedCurrentDate,
-      percentage: this.rangeValue,
-      tags: JSONselectedTags,
-      a1: this.answers[0],
-      a2: this.answers[1],
-      a3: this.answers[2],
-      a4: this.answers[3],
-      a5: this.answers[4]
-    }
+    //guardem a la bdd els tags seleccionats en quest dia:
+    await this.sql.insertUserTags(JSONselectedTags);
+    //guardem les respostes d'aquest dia:
+    await this.sql.insertAnswer(form);
 
-    const questionsJson = {
-      q1: this.questions[0],
-      q2: this.questions[1],
-      q3: this.questions[2],
-      q4: this.questions[3],
-      q5: this.questions[4]
-    }
-
-
-    console.log(JSON.stringify(Object.assign({}, this.selectedTags)))
-    console.log(JSONselectedTags, "JSONselectedTags")
-
-    await this.sql.insertUserTags(JSONselectedTags)
-    await this.sql.insertQuestions(questionsJson)
-
-    const lastQuestion = await this.sql.getLastQuestions()
-    const questionId = lastQuestion[0].id
-    const lastUserTags = await this.sql.getLastUserTags()
-    const userTagsId = lastUserTags[0].id
-
-    form["formId"] = questionId
-    form["userTagId"] = userTagsId
-    console.log(form, "ANSWERS")
-    await this.sql.insertAnswer(form)
-
-    console.log(await this.sql.getAllRows(), "ALL ROWS")
-
+    //activem l'alerta:
+    this.presentAlert();
   }
 
   /** Canvia el color del component ion-range segons el valor rebut
@@ -206,4 +173,21 @@ export class Tab1Page {
         this.color = "dark"
     }
   }
+
+
+  public createFormAnswers(JSONselectedTags) {
+    const form: form_answers =
+    {
+      date: this.formattedCurrentDate,
+      percentage: this.rangeValue,
+      tags: JSONselectedTags,
+      a1: this.answers[0],
+      a2: this.answers[1],
+      a3: this.answers[2],
+      a4: this.answers[3],
+      a5: this.answers[4]
+    };
+    return form;
+  }
+
 }

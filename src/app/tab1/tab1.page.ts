@@ -166,4 +166,10 @@ export class Tab1Page {
     this.selectedTags.splice(this.selectedTags.indexOf(tag), 1)
   }
 
+  public modifyDay(n:number):void{
+    this.currentDate.setDate(this.currentDate.getDate()+n);
+    this.formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
+    this.refreshForm();
+  }
+
 }

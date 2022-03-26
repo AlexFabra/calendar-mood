@@ -17,10 +17,11 @@
 
   <ng-container>
     <ion-list style="text-align:center">
+      <ion-button (click)="modifyDay(-1)">-</ion-button>
       <ion-label>{{currentDate | date: 'fullDate'}}</ion-label>
+      <ion-button (click)="modifyDay(+1)">+</ion-button>
     </ion-list>
   </ng-container>
-
 
   <ion-item>
     <ion-range min="0" max="10" value="5" snaps [pin]="true" ticks="true" [color]="color"

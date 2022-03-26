@@ -17,9 +17,7 @@
 
   <ng-container>
     <ion-list style="text-align:center">
-      <ion-button (click)="modifyDay(-1)">-</ion-button>
-      <ion-label>{{currentDate | date: 'fullDate'}}</ion-label>
-      <ion-button (click)="modifyDay(+1)">+</ion-button>
+      <ng-container>{{currentDate | date: 'fullDate'}}</ng-container>
     </ion-list>
   </ng-container>
 
@@ -42,7 +40,7 @@
 
   <ion-list style="text-align:center">
     <ion-chip *ngFor="let tag of selectedTags">
-      <ion-label >{{tag}}
+      <ion-label>{{tag}}
         <ion-icon name="close" (click)="deleteLabel(tag)"></ion-icon>
       </ion-label>
     </ion-chip>
@@ -50,9 +48,9 @@
 
   <ion-item *ngFor="let question of questions; let i=index">
     <ion-item *ngIf="question">
-    <ion-label position="stacked">{{question}}</ion-label>
-    <ion-textarea placeholder="la teva resposta" [(ngModel)]="answers[i]"></ion-textarea>
-  </ion-item>
+      <ion-label position="stacked">{{question}}</ion-label>
+      <ion-textarea placeholder="la teva resposta" [(ngModel)]="answers[i]"></ion-textarea>
+    </ion-item>
   </ion-item>
 
   <ion-button expand="block" (click)=saveClick()>Guardar</ion-button>

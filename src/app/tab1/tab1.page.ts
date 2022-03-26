@@ -62,6 +62,9 @@ export class Tab1Page {
   }
 
   public async refreshForm(): Promise<void> {
+    this.answers=[];
+    this.selectedTags=[];
+    
     //todo: hacer un get de si hay respuestas al dia de hoy y si las hay poder modificarlas
     const lastAnswer = await this.sql.getAnswersFromDate(this.formattedCurrentDate)
     //si lastAnswer no és vuida, obtenim els tags i les respostes d'ella
@@ -166,10 +169,6 @@ export class Tab1Page {
     this.selectedTags.splice(this.selectedTags.indexOf(tag), 1)
   }
 
-  public modifyDay(n:number):void{
-    this.currentDate.setDate(this.currentDate.getDate()+n);
-    this.formattedCurrentDate = formatDate(this.currentDate, 'dd/MM/yyyy', this.locale)
-    this.refreshForm();
-  }
+
 
 }

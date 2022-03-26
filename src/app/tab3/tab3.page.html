@@ -7,31 +7,31 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div  >
-  <ng-container>
-    <ion-list style="text-align:center">
-      <ion-label>{{selectedMonth}}, {{selectedYear}}</ion-label>
-    </ion-list>
-  </ng-container>
+  <div>
+    <ng-container>
+      <ion-list style="text-align:center">
+        <ion-label>{{selectedMonth}}, {{selectedYear}}</ion-label>
+      </ion-list>
+    </ng-container>
 
-  <ion-card style="background-color: white;">
-    <div echarts [options]="option" [extentions]="echartsExtentions"></div>
-  </ion-card>
+    <ion-card style="background-color: white;">
+        <div echarts id="chart" [options]="option" [extentions]="echartsExtentions"></div>
+    </ion-card>
 
-  <ion-button expand="block" (click)="showPicker()">Selecciona mes/any a mostrar</ion-button>
+    <ion-button expand="block" (click)="showPicker()">Selecciona mes/any a mostrar</ion-button>
 
-  <ion-card>
-    <ion-card-title>Freqüència d'emocions</ion-card-title>
-    <ion-card-content>
-      <ion-item *ngFor="let element of data">
-        <div><b>{{element.name}}</b>: {{element.value}}</div>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-</div>
-<div *ngIf="data.length===0">
-  <ion-item style="text-align:center">
-    <ion-label>No hi ha dades a mostrar</ion-label>
-  </ion-item>
-</div>
+    <ion-card>
+      <ion-card-title>Freqüència d'emocions</ion-card-title>
+      <ion-card-content>
+        <ion-item *ngFor="let element of data">
+          <div><b>{{element.name}}</b>: {{element.value}}</div>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div *ngIf="data.length===0">
+    <ion-item style="text-align:center">
+      <ion-label>No hi ha dades a mostrar</ion-label>
+    </ion-item>
+  </div>
 </ion-content>

@@ -7,9 +7,64 @@
     border-radius: 0%;
     font-weight:600;
 }
-::ng-deep.redDay {
-    background: rgb(255, 120, 120) !important;
-    border-radius: 100%;
-    font-weight:300;
-}
 
+::ng-deep.mood0 {
+    background: #4c3ffd !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood1 {
+    background: #9089fb !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood2 {
+    background: #c834fe !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood3 {
+    background: #e59eff !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood4 {
+    background: #ff2e6d !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood5 {
+    background: #fe653e !important ;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood5 {
+    background: #fe653e!important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood6 {
+    background: #ffba7a !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood7 {
+    background: #fed234 !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood8 {
+    background: #d2ff2e !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood9 {
+    background: #9effda !important;
+    border-radius: 0%;
+    font-weight:600;
+}
+::ng-deep.mood10 {
+    background: #b8feff !important;
+    border-radius: 0%;
+    font-weight:600;
+}

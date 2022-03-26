@@ -37,7 +37,6 @@ export class SqlConnectorService {
       })
         .then(async (db: SQLiteObject) => {
           this.databaseObj = db;
-          console.log("database created")
           await this.createTable();
         }).catch((e) => {
         console.log("ERROR CREATING DATABASE");
@@ -58,8 +57,6 @@ export class SqlConnectorService {
           console.log(e)
         });
     }
-
-    console.log("TABLES CREATED")
 
     //Si no hi ha cap pregunta se'n creen de bàsiques
     if (this.isEmpty(await this.getLastQuestions())) {

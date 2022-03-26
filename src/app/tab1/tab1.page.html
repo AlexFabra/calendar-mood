@@ -39,16 +39,19 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
-    <ion-chip *ngFor="let selectedTag of selectedTags">
-      <ion-label>{{selectedTag}}<ion-icon name="close"></ion-icon>
+  <ion-list style="text-align:center">
+    <ion-chip *ngFor="let tag of selectedTags">
+      <ion-label >{{tag}}
+        <ion-icon name="close" (click)="deleteLabel(tag)"></ion-icon>
       </ion-label>
     </ion-chip>
-  </ion-item>
+  </ion-list>
 
   <ion-item *ngFor="let question of questions; let i=index">
+    <ion-item *ngIf="question">
     <ion-label position="stacked">{{question}}</ion-label>
     <ion-textarea placeholder="la teva resposta" [(ngModel)]="answers[i]"></ion-textarea>
+  </ion-item>
   </ion-item>
 
   <ion-button expand="block" (click)=saveClick()>Guardar</ion-button>

@@ -32,8 +32,8 @@ export class Tab2Page {
     //obtenim els moods:
     this.sql.getMoodFromDate(formattedDate).then((res) => { this.moods = res })
     //actualitzem el calendari:
-    this.monthCalendar.updateTodaysDate();
     this.getChangedValue(this.monthView);
+    this.monthCalendar.updateTodaysDate();
   }
 
   constructor(date: DateAdapter<Date>, private datePipe: DatePipe, private sql: SqlConnectorService) {
@@ -52,8 +52,10 @@ export class Tab2Page {
     const formattedDate = this.datePipe.transform(cellDate, 'dd/MM/yyyy');
 
     let style: String = '';
+
     // Només és si la vista del mes:
     if (view === 'month') {
+
       //nombre del dia del mes:
       const date: number = cellDate.getDate();
       //nombre del dia de la setmana:
@@ -64,16 +66,13 @@ export class Tab2Page {
       } else if (dayOfWeek === 6) {
         style = 'dissabte';
       }
+      //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
+      this.moods.map((day) => {
+        if (day.date === formattedDate) {
+          style = 'mood' + day.mood
+        }
+      })
     }
-
-    //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
-    this.moods.map((day) => {
-      if (day.date === formattedDate) {
-        console.log('mood' + day.mood)
-        style = 'mood' + day.mood;
-      }
-    })
-
     return style;
   }
 
@@ -86,52 +85,60 @@ export class Tab2Page {
     //vuidem les preguntes i respostes:
     this.questions = [];
     this.answers = [];
-    this.mood=[];
-    this.tags=[];
+    this.mood = [];
+    this.tags = [];
+    let formId;
 
     //obtenim el dia amb el format que espera com a paràmetre la funció del backend corresponent
     const selectedDay: string = this.datePipe.transform(event, 'dd/MM/yyyy');
+    //obtenim les respostes del dia (si n'hi han)
     const answer = await this.sql.getAnswersFromDate(selectedDay)
 
-    let formId;
     if (!this.sql.isEmpty(answer[0])) {
       //guardem el id per obtenir les preguntes:
       formId = answer[0].form_id
+
+      //guardem les respostes organitzades:
+      this.guardarRespostes(answer);
+
+      //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
+      this.moods.map((day) => {
+        if (day.date === selectedDay) {
+          this.mood = day.mood;
+        }
+      })
+
+      //obtenim les preguntes:
+      await this.sql.getQuestionsFromId(formId).then((res) => {
+        if (!this.sql.isEmpty(res[0])) {
+          let resJson = res[0]
+          this.questions = Object.keys(resJson).map((key) => {
+            return resJson[key];
+          })
+          this.questions.splice(0, 1)
+          return res;
+        }
+      });
+
+      //obtenim els tags del dia:
+      const tags = await this.sql.getUserTagFromId(answer[0].user_tags_id).then((res) => {
+        if (!this.sql.isEmpty(res[0])) {
+          let resJson = res[0]
+          this.tags = Object.keys(resJson).map((key) => {
+            return resJson[key];
+          })
+          //esborrem el id, que hi hes al primer lloc de l'array
+          this.tags.splice(0, 1)
+          //esborrem els elements vuits:
+          this.tags = this.tags.filter(tag => tag.length > 1);
+
+          return res;
+        }
+      });
+
+
     }
 
-    //guardem les respostes organitzades:
-    this.guardarRespostes(answer);
-
-    //recorrem els moods i si algun registre coincideix amb la data l'obtenim i li posem l'estil
-    this.moods.map((day) => {
-      if (day.date === selectedDay) {
-        this.mood = day.mood;
-      }
-    })
-
-    //obtenim les preguntes:
-    await this.sql.getQuestionsFromId(formId).then((res) => {
-      if (!this.sql.isEmpty(res[0])) {
-        let resJson = res[0]
-        this.questions = Object.keys(resJson).map((key) => {
-          return resJson[key];
-        })
-        this.questions.splice(0, 1)
-        return res;
-      }
-    });
-
-    //obtenim els tags del dia:
-    const tags = await this.sql.getUserTagFromId(answer[0].user_tags_id).then((res) => {
-      if (!this.sql.isEmpty(res[0])) {
-        let resJson = res[0]
-        this.tags = Object.keys(resJson).map((key) => {
-          return resJson[key];
-        })
-        this.tags.splice(0, 1)
-        return res;
-      }
-    });
 
     this.monthCalendar.updateTodaysDate();
   }

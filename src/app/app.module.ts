@@ -10,12 +10,7 @@ import {SQLite} from '@awesome-cordova-plugins/sqlite/ngx';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {SQLitePorter} from '@awesome-cordova-plugins/sqlite-porter/ngx';
 
-import { SqlConnectorService } from './services/sql-connector.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ModalEditFormPageModule } from './tab4/modal-edit-form/modal-edit-form.module';
-import { ModalEditEmotionalLabelsPageModule } from './tab4/modal-edit-emotional-labels/modal-edit-emotional-labels.module';
-
-
 
 @NgModule({
   declarations: [AppComponent],

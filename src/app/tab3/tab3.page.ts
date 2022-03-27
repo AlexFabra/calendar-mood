@@ -26,7 +26,7 @@ export class Tab3Page {
   currentDate: Date = new Date();
   currentYear: number = this.currentDate.getFullYear();
 
-  currentMonth: number = this.currentDate.getMonth() + 1;
+  currentMonth: number = this.currentDate.getMonth();
 
   selectedMonth: String = this.monthOptions[this.currentMonth];
   selectedYear: String = this.currentYear.toString();
@@ -58,6 +58,7 @@ export class Tab3Page {
   /** crea una gràfica tipus donut amb la informació que rep dels tags.
    */
   async createChart() {
+    this.option={};
     await this.initializeData();
     //configuració del chart:
     this.option= {
@@ -100,7 +101,9 @@ export class Tab3Page {
   async initializeData() {
     this.data = [];
     //obtenim la date per cercar els tags segons aquesta:
+    console.log("current",this.currentDate);
     const formattedDate = this.obtainFormattedDate(this.currentDate)
+    console.log("formatted",formattedDate)
 
     //obtenim tots els tags:
     const tags = await this.sql.getAllTags();
@@ -136,7 +139,7 @@ export class Tab3Page {
         {
           text: 'Confirma',
           handler: (value) => {
-            this.changeDate(value.month.text, value.year.text);
+            this.changeDate(value.month.value, value.year.text);
             this.createChart();
           }
         }
@@ -151,8 +154,7 @@ export class Tab3Page {
         {
           name: 'year',
           prefix: 'any:',
-          options: this.getYearOptions(),
-          selectedIndex: this.currentYear
+          options: this.getYearOptions()
         }
       ]
     };
@@ -166,8 +168,10 @@ export class Tab3Page {
    */
   getMonthOptions() {
     let options = [];
+    let index = 0;
     this.monthOptions.forEach(x => {
-      options.push({ text: x, value: x });
+      options.push({ text: x, value: index });
+      index++;
     });
     return options;
   }
@@ -189,7 +193,9 @@ export class Tab3Page {
   changeDate(month, year) {
     this.selectedMonth = month;
     this.selectedYear = year;
-    this.currentDate = new Date(year, month, 1);
+    console.log("date",month,year)
+    this.currentDate = new Date(parseInt(year), parseInt(month), 1);
+    console.log("change date",this.currentDate)
     this.unselected = true;
   }
 }

@@ -139,7 +139,7 @@ export class Tab3Page {
         {
           text: 'Confirma',
           handler: (value) => {
-            this.changeDate(value.month.value, value.year.text);
+            this.changeDate(value.month.value,value.month.text, value.year.text);
             this.createChart();
           }
         }
@@ -190,12 +190,10 @@ export class Tab3Page {
    * @param month 
    * @param year 
    */
-  changeDate(month, year) {
-    this.selectedMonth = month;
+  changeDate(month, monthText,year) {
+    this.selectedMonth = monthText;
     this.selectedYear = year;
-    console.log("date",month,year)
     this.currentDate = new Date(parseInt(year), parseInt(month), 1);
-    console.log("change date",this.currentDate)
     this.unselected = true;
   }
 }

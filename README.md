@@ -14,7 +14,7 @@ chrome://inspect/device#devices per obrir el visor del móbil en chrome i poder 
 ![calendar](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1648410790/Screenshot_20220327_214803_io.ionic.starter_m4iy4w.jpg)
 ![chart](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1738324361/CalendarMood/calendar-chart_iqppu9.jpg)
 ![chart-year](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1738324362/CalendarMood/calendar-chart-year_w1iina.jpg)
-![settings](https://res.cloudinary.com/dlmdj7zsu/image/upload/v1738324362/CalendarMood/settings_wbx8lc.jpg)
+![settings](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1738324362/CalendarMood/settings_wbx8lc.jpg)
 ![edit-questions](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1738324363/CalendarMood/edit-questions_dmb8yr.jpg)
 ![tags](https://res.cloudinary.com/dlmdj7zsu/image/upload/t_square-fit/v1738324362/CalendarMood/calendar-chart-year_w1iina.jpg)
 
